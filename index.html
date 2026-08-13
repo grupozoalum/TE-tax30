@@ -2,40 +2,50 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#05050D" />
   <title>T30 — Base de Taxis AIFA</title>
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- GSAP + ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <style>
-    /* ─── Tokens ─── */
+    /* ═══════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════ */
     :root {
-      --orange:   #E8820A;
-      --orange2:  #FF9520;
-      --magenta:  #C8188C;
-      --blue:     #1A4FA0;
-      --gold:     #BFA030;
-      --bg:       #05050D;
-      --bg2:      #0A0A18;
-      --surface:  #0F0F22;
-      --surface2: #14142A;
-      --text:     #F2F2F5;
-      --muted:    #7878A0;
-      --muted2:   #AAAAC8;
-      --radius:   14px;
+      --orange:    #E8820A;
+      --orange2:   #FF9520;
+      --magenta:   #C8188C;
+      --blue:      #1A4FA0;
+      --gold:      #BFA030;
+      --bg:        #05050D;
+      --bg2:       #0A0A18;
+      --surface:   #0F0F22;
+      --surface2:  #14142A;
+      --text:      #F2F2F5;
+      --muted:     #7878A0;
+      --muted2:    #AAAAC8;
+      --radius:    14px;
       --radius-sm: 8px;
     }
 
-    /* ─── Reset ─── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    /* ═══════════════════════════════════════════
+       RESET
+    ═══════════════════════════════════════════ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
     body {
       background: var(--bg);
       color: var(--text);
@@ -44,9 +54,27 @@
       line-height: 1.6;
       overflow-x: hidden;
       cursor: none;
+      -webkit-font-smoothing: antialiased;
+    }
+    img, video { max-width: 100%; display: block; }
+    a { -webkit-tap-highlight-color: transparent; }
+
+    /* ═══════════════════════════════════════════
+       NOISE OVERLAY
+    ═══════════════════════════════════════════ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9990;
     }
 
-    /* ─── CUSTOM CURSOR ─── */
+    /* ═══════════════════════════════════════════
+       CURSOR (solo desktop)
+    ═══════════════════════════════════════════ */
     .cursor {
       position: fixed;
       top: 0; left: 0;
@@ -56,7 +84,7 @@
       pointer-events: none;
       z-index: 9999;
       transform: translate(-50%, -50%);
-      transition: width 0.2s, height 0.2s, background 0.2s, opacity 0.2s;
+      transition: width 0.2s, height 0.2s;
       mix-blend-mode: screen;
     }
     .cursor-ring {
@@ -68,25 +96,16 @@
       pointer-events: none;
       z-index: 9998;
       transform: translate(-50%, -50%);
-      transition: width 0.35s cubic-bezier(0.16,1,0.3,1), height 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.2s;
+      transition: width 0.35s cubic-bezier(0.16,1,0.3,1), height 0.35s;
     }
     body:has(a:hover) .cursor,
     body:has(button:hover) .cursor { width: 16px; height: 16px; }
     body:has(a:hover) .cursor-ring,
     body:has(button:hover) .cursor-ring { width: 56px; height: 56px; opacity: 0.6; }
 
-    /* ─── NOISE TEXTURE overlay ─── */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.025;
-      pointer-events: none;
-      z-index: 9990;
-    }
-
-    /* ─── NAV ─── */
+    /* ═══════════════════════════════════════════
+       NAV
+    ═══════════════════════════════════════════ */
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -98,8 +117,9 @@
       transition: background 0.4s, padding 0.3s, backdrop-filter 0.3s;
     }
     nav.scrolled {
-      background: rgba(5,5,13,0.88);
+      background: rgba(5,5,13,0.92);
       backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border-bottom: 1px solid rgba(255,255,255,0.05);
       padding: 0.75rem 3rem;
     }
@@ -128,8 +148,7 @@
     .nav-links a::after {
       content: '';
       position: absolute;
-      bottom: -3px;
-      left: 0; right: 0;
+      bottom: -3px; left: 0; right: 0;
       height: 1px;
       background: var(--orange);
       transform: scaleX(0);
@@ -149,6 +168,7 @@
       border: 1.5px solid var(--orange);
       letter-spacing: 0.06em;
       transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+      white-space: nowrap;
     }
     .nav-cta:hover {
       background: var(--orange);
@@ -156,14 +176,14 @@
       box-shadow: 0 0 24px rgba(232,130,10,0.35);
     }
 
-    /* ─── VIDEO SECTION (FIRST) ─── */
-    .video-section {
-      padding: 0;
-      background: var(--bg);
-    }
+    /* ═══════════════════════════════════════════
+       VIDEO SECTION
+    ═══════════════════════════════════════════ */
+    .video-section { padding: 0; background: var(--bg); }
     .video-sticky {
       position: relative;
       height: 100vh;
+      min-height: 500px;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -175,8 +195,6 @@
       object-fit: cover;
       position: absolute;
       inset: 0;
-      transform: scale(1.04);
-      transition: transform 0.1s linear;
     }
     .video-overlay {
       position: absolute;
@@ -193,62 +211,19 @@
       align-items: center;
       justify-content: center;
     }
-
-    /* Scroll invitation at top of video */
-    .video-scroll-prompt {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      z-index: 3;
-    }
-    .scroll-prompt-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: rgba(240,240,245,0.5);
-    }
-    .scroll-mouse {
-      width: 26px;
-      height: 40px;
-      border: 1.5px solid rgba(255,255,255,0.3);
-      border-radius: 13px;
-      display: flex;
-      justify-content: center;
-      padding-top: 7px;
-    }
-    .scroll-mouse-dot {
-      width: 4px;
-      height: 8px;
-      background: var(--orange);
-      border-radius: 2px;
-      animation: mouseScroll 1.8s ease-in-out infinite;
-    }
-    @keyframes mouseScroll {
-      0% { transform: translateY(0); opacity: 1; }
-      80% { transform: translateY(12px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 0; }
-    }
-
-    /* Video caption (changes per phase) */
     .video-caption-wrap {
       position: absolute;
-      bottom: 12%;
+      bottom: 15%;
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
       max-width: 760px;
-      padding: 0 2rem;
+      padding: 0 1.5rem;
       width: 100%;
     }
     .video-caption h2 {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-size: clamp(2.8rem, 9vw, 7rem);
       line-height: 0.95;
       letter-spacing: 0.03em;
       margin-bottom: 1rem;
@@ -256,33 +231,10 @@
     }
     .video-caption h2 span { color: var(--orange); }
     .video-caption p {
-      font-size: 1.05rem;
+      font-size: clamp(0.85rem, 2.5vw, 1.05rem);
       color: rgba(242,242,245,0.7);
       font-weight: 300;
-      letter-spacing: 0.01em;
     }
-
-    /* Progress bar */
-    .video-progress {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 180px;
-      height: 1.5px;
-      background: rgba(255,255,255,0.12);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .video-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--magenta), var(--orange));
-      width: 0%;
-      border-radius: 2px;
-      transition: width 0.05s linear;
-    }
-
-    /* Phase dots */
     .video-phases {
       position: absolute;
       bottom: 5.5rem;
@@ -302,40 +254,37 @@
       transform: scale(1.4);
     }
 
-    /* ─── HERO (after video) ─── */
+    /* ═══════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════ */
     .hero {
       position: relative;
       min-height: 100vh;
-      display: grid;
-      place-items: center;
+      display: flex;
+      align-items: center;
       overflow: hidden;
-      padding: 8rem 3rem 6rem;
+      padding: 8rem 3rem 0;
     }
-    /* Ambient background */
     .hero::before {
       content: '';
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background:
-        radial-gradient(ellipse 55% 70% at 80% 40%, rgba(26,79,160,0.22) 0%, transparent 65%),
-        radial-gradient(ellipse 35% 50% at 12% 65%, rgba(200,24,140,0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 50% 5%, rgba(232,130,10,0.1) 0%, transparent 55%);
+        radial-gradient(ellipse 55% 70% at 80% 40%, rgba(26,79,160,0.2) 0%, transparent 65%),
+        radial-gradient(ellipse 35% 50% at 10% 65%, rgba(200,24,140,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 35% at 50% 0%, rgba(232,130,10,0.08) 0%, transparent 55%);
       pointer-events: none;
     }
-    /* Grid lines */
     .hero::after {
       content: '';
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-      background-size: 80px 80px;
+        linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 70px 70px;
       pointer-events: none;
     }
     .hero-inner {
-      position: relative;
-      z-index: 2;
+      position: relative; z-index: 2;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 4rem;
@@ -343,53 +292,198 @@
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
+      padding-bottom: 5rem;
     }
-    .hero-eyebrow {
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 1.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      opacity: 0;
+
+    /* Eyebrow pill */
+    .hero-eyebrow-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(232,130,10,0.08);
+      border: 1px solid rgba(232,130,10,0.22);
+      border-radius: 100px;
+      padding: 0.3rem 1rem 0.3rem 0.6rem;
+      margin-bottom: 1.6rem;
     }
-    .hero-eyebrow::before {
-      content: '';
-      display: inline-block;
-      width: 24px;
-      height: 1.5px;
+    .hero-eyebrow-pill-dot {
+      width: 6px; height: 6px; border-radius: 50%;
       background: var(--orange);
+      animation: blink 2s ease-in-out infinite;
+      flex-shrink: 0;
     }
+    .hero-eyebrow-pill-text {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--orange);
+    }
+
+    /* Title */
     .hero-title {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(5rem, 10vw, 9.5rem);
+      font-size: clamp(5rem, 11vw, 8.5rem);
       line-height: 0.88;
-      letter-spacing: 0.015em;
-      margin-bottom: 1.8rem;
-      opacity: 0;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.4rem;
     }
-    .hero-title .line-orange { color: var(--orange); }
-    .hero-title .line-blue { color: #B8CCFF; }
+    .hero-title .t-orange { color: var(--orange); display: block; }
+    .hero-title .t-outline {
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(184,204,255,0.5);
+      display: block;
+    }
+    .hero-title .t-ghost {
+      font-size: clamp(1rem, 2.8vw, 2.2rem);
+      letter-spacing: 0.2em;
+      color: rgba(242,242,245,0.12);
+      display: block;
+      margin-top: 0.2rem;
+    }
+    .hero-divider {
+      width: 48px; height: 2px;
+      background: linear-gradient(90deg, var(--orange), transparent);
+      margin: 1.6rem 0;
+      border-radius: 2px;
+    }
     .hero-sub {
-      font-size: 1rem;
-      font-weight: 300;
+      font-size: 0.95rem; font-weight: 300;
       color: var(--muted2);
-      max-width: 400px;
-      margin-bottom: 2.5rem;
-      line-height: 1.75;
-      opacity: 0;
+      max-width: 380px;
+      line-height: 1.8;
+      margin-bottom: 2.2rem;
     }
     .hero-sub strong { color: var(--text); font-weight: 500; }
     .hero-actions {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
+      display: flex; gap: 0.9rem; align-items: center; flex-wrap: wrap;
+    }
+
+    /* Trust row */
+    .hero-trust {
+      display: flex; align-items: center; gap: 1rem;
+      margin-top: 2.2rem;
+      padding-top: 1.6rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
       flex-wrap: wrap;
+    }
+    .hero-avatars { display: flex; }
+    .hero-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.58rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .hero-avatar + .hero-avatar { margin-left: -8px; }
+    .hero-trust-text {
+      font-size: 0.75rem; color: var(--muted); line-height: 1.4;
+    }
+    .hero-trust-text strong { color: var(--text); font-weight: 600; display: block; }
+
+    /* Right: cards */
+    .hero-right {
+      display: flex; flex-direction: column; gap: 1rem;
       opacity: 0;
     }
+    .hero-card-main {
+      background: rgba(15,15,34,0.9);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px; padding: 1.8rem;
+      position: relative; overflow: hidden;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .hero-card-main::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--magenta), var(--blue));
+    }
+    .hero-card-main-head {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 1.4rem;
+      flex-wrap: wrap;
+    }
+    .hero-mini-orb {
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 2px solid rgba(232,130,10,0.4);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; flex-shrink: 0;
+    }
+    .hero-mini-orb::after {
+      content: '';
+      position: absolute; inset: -7px; border-radius: 50%;
+      border: 1px solid rgba(232,130,10,0.12);
+    }
+    .hero-mini-orb-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem; color: var(--orange); letter-spacing: 0.05em;
+    }
+    .hero-card-meta { flex: 1; min-width: 80px; }
+    .hero-card-name {
+      font-weight: 700; font-size: 1rem;
+      letter-spacing: -0.01em; margin-bottom: 0.2rem;
+    }
+    .hero-card-loc { font-size: 0.72rem; color: var(--muted); }
+    .hero-online {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.66rem; font-weight: 600;
+      color: #22C55E; letter-spacing: 0.08em; text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .hero-online-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #22C55E;
+      animation: blink 2s ease-in-out infinite;
+    }
+    .hero-route-row {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; padding: 0.85rem 1rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 0.55rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .hero-route-row:last-child { margin-bottom: 0; }
+    .hero-route-row:hover {
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(232,130,10,0.15);
+    }
+    .hero-route-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .hero-route-body { flex: 1; min-width: 0; }
+    .hero-route-from { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.1rem; }
+    .hero-route-dest {
+      font-size: 0.84rem; font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .hero-route-tag {
+      margin-left: auto; flex-shrink: 0;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem; color: var(--orange); letter-spacing: 0.05em;
+    }
+    .hero-cards-pair {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+    }
+    .hero-card-sm {
+      background: rgba(15,15,34,0.9);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 1.1rem 1.2rem;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .hero-card-sm-icon { font-size: 1.2rem; margin-bottom: 0.7rem; }
+    .hero-card-sm-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.9rem; color: var(--orange);
+      letter-spacing: 0.03em; line-height: 1; margin-bottom: 0.2rem;
+    }
+    .hero-card-sm-lbl {
+      font-size: 0.67rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.09em;
+    }
+
+    /* ═══════════════════════════════════════════
+       BUTTONS
+    ═══════════════════════════════════════════ */
     .btn-primary {
       background: var(--orange);
       color: #fff;
@@ -402,16 +496,10 @@
       transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
       position: relative;
       overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-      transition: left 0.4s ease;
-    }
-    .btn-primary:hover::before { left: 100%; }
     .btn-primary:hover {
       background: var(--orange2);
       transform: translateY(-2px);
@@ -426,595 +514,15 @@
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: var(--radius-sm);
       transition: border-color 0.25s, color 0.25s, background 0.25s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn-ghost:hover {
       border-color: rgba(232,130,10,0.4);
       color: var(--orange);
       background: rgba(232,130,10,0.05);
     }
-
-    /* ─── ORB ─── */
-    .hero-orb-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-    }
-    .orb-scene {
-      position: relative;
-      width: 400px;
-      height: 400px;
-    }
-    .orb-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 2px solid transparent;
-    }
-    .orb-ring-1 {
-      border-top-color: var(--blue);
-      border-left-color: rgba(26,79,160,0.25);
-      animation: spin1 7s linear infinite;
-      box-shadow: 0 0 50px rgba(26,79,160,0.3), inset 0 0 50px rgba(26,79,160,0.05);
-    }
-    .orb-ring-2 {
-      inset: 32px;
-      border-top-color: var(--magenta);
-      border-right-color: rgba(200,24,140,0.25);
-      animation: spin2 5s linear infinite;
-      box-shadow: 0 0 35px rgba(200,24,140,0.25);
-    }
-    .orb-ring-3 {
-      inset: 64px;
-      border-bottom-color: var(--gold);
-      border-left-color: rgba(191,160,48,0.25);
-      animation: spin3 4s linear infinite;
-      box-shadow: 0 0 20px rgba(191,160,48,0.25);
-    }
-    .orb-ring-4 {
-      inset: 92px;
-      border-right-color: rgba(232,130,10,0.35);
-      border-bottom-color: rgba(232,130,10,0.15);
-      animation: spin1 9s linear infinite reverse;
-    }
-    .orb-center {
-      position: absolute;
-      inset: 116px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 38% 32%, rgba(232,130,10,0.95), rgba(200,80,10,0.4) 55%, transparent);
-      box-shadow:
-        0 0 80px rgba(232,130,10,0.55),
-        0 0 140px rgba(232,130,10,0.2),
-        inset 0 0 30px rgba(255,200,100,0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .orb-center-text {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 3.2rem;
-      color: #fff;
-      letter-spacing: 0.05em;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
-    }
-    .orb-glow {
-      position: absolute;
-      inset: 16px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(26,79,160,0.12) 0%, transparent 70%);
-      animation: pulse 4s ease-in-out infinite;
-    }
-    .orb-particle {
-      position: absolute;
-      border-radius: 50%;
-      background: var(--orange);
-      animation: orbit linear infinite;
-    }
-    @keyframes orbit {
-      from { transform: rotate(0deg) translateX(var(--r)) rotate(0deg); }
-      to   { transform: rotate(360deg) translateX(var(--r)) rotate(-360deg); }
-    }
-    @keyframes spin1 { to { transform: rotate(360deg); } }
-    @keyframes spin2 { to { transform: rotate(-360deg); } }
-    @keyframes spin3 { to { transform: rotate(360deg); } }
-    @keyframes pulse {
-      0%, 100% { opacity: 0.4; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.08); }
-    }
-
-    /* Floating badge */
-    .hero-badge {
-      position: absolute;
-      bottom: -24px;
-      right: -24px;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: var(--radius);
-      padding: 1rem 1.4rem;
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px);
-    }
-    .badge-icon {
-      width: 40px; height: 40px;
-      background: rgba(232,130,10,0.12);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-    }
-    .badge-text { font-size: 0.75rem; color: var(--muted); line-height: 1.4; }
-    .badge-text strong { color: var(--text); display: block; font-size: 1rem; font-weight: 700; }
-    /* Online pulse */
-    .badge-dot {
-      width: 7px; height: 7px;
-      background: #22C55E;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #22C55E;
-      animation: blink 2s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* ─── STATS STRIP ─── */
-    .stats-strip {
-      background: var(--surface);
-      border-top: 1px solid rgba(255,255,255,0.04);
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      padding: 2.2rem 3rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .stats-strip::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 20%; right: 20%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(232,130,10,0.4), transparent);
-    }
-    .stats-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
-      text-align: center;
-    }
-    .stat { position: relative; }
-    .stat + .stat::before {
-      content: '';
-      position: absolute;
-      left: -1rem;
-      top: 20%; bottom: 20%;
-      width: 1px;
-      background: rgba(255,255,255,0.06);
-    }
-    .stat-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.8rem;
-      color: var(--orange);
-      line-height: 1;
-      letter-spacing: 0.03em;
-    }
-    .stat-label {
-      font-size: 0.72rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-top: 0.3rem;
-    }
-
-    /* ─── SECTION BASE ─── */
-    section { padding: 7rem 3rem; }
-    .section-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .section-eyebrow {
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-    }
-    .section-eyebrow::before {
-      content: '';
-      display: inline-block;
-      width: 20px;
-      height: 1.5px;
-      background: var(--orange);
-    }
-    .section-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(2.8rem, 5vw, 4.2rem);
-      line-height: 0.95;
-      letter-spacing: 0.02em;
-      margin-bottom: 1.5rem;
-    }
-    .section-desc {
-      font-size: 0.95rem;
-      color: var(--muted2);
-      max-width: 520px;
-      line-height: 1.75;
-    }
-
-    /* ─── SERVICES ─── */
-    .services-section { background: var(--bg2); }
-    .services-header {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: end;
-      margin-bottom: 4rem;
-    }
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-    }
-    .service-card {
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: var(--radius);
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-      cursor: default;
-    }
-    .service-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--orange), var(--magenta));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
-    }
-    /* Bottom ambient glow */
-    .service-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0; height: 50%;
-      background: radial-gradient(ellipse at 50% 100%, var(--glow-color, rgba(232,130,10,0.07)), transparent 70%);
-      opacity: 0;
-      transition: opacity 0.4s;
-    }
-    .service-card:hover {
-      border-color: rgba(232,130,10,0.2);
-      transform: translateY(-5px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    }
-    .service-card:hover::before { transform: scaleX(1); }
-    .service-card:hover::after { opacity: 1; }
-    .service-icon {
-      width: 50px; height: 50px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 1.4rem;
-    }
-    .icon-orange  { background: rgba(232,130,10,0.1); --glow-color: rgba(232,130,10,0.08); }
-    .icon-magenta { background: rgba(200,24,140,0.1);  --glow-color: rgba(200,24,140,0.07); }
-    .icon-blue    { background: rgba(26,79,160,0.12);  --glow-color: rgba(26,79,160,0.08); }
-    .service-card h3 {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 0.6rem;
-      letter-spacing: -0.01em;
-    }
-    .service-card p {
-      font-size: 0.85rem;
-      color: var(--muted2);
-      line-height: 1.7;
-    }
-
-    /* ─── WHY T30 ─── */
-    .why-section { background: var(--bg); }
-    .why-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 7rem;
-      align-items: center;
-    }
-    .why-visual {
-      position: relative;
-      height: 500px;
-    }
-    .why-card-float {
-      position: absolute;
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: var(--radius);
-      padding: 1.5rem 1.8rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-      backdrop-filter: blur(10px);
-    }
-    .why-card-float:nth-child(1) { top: 0; left: 0; width: 62%; }
-    .why-card-float:nth-child(2) { bottom: 50px; right: 0; width: 58%; }
-    .why-card-float:nth-child(3) {
-      top: 46%; left: 50%;
-      transform: translate(-40%, -50%);
-      width: 54%;
-    }
-    .float-label {
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-    }
-    .float-value {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.2rem;
-      color: var(--orange);
-      line-height: 1;
-      letter-spacing: 0.03em;
-    }
-    .float-sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.35rem; }
-    .why-list { display: flex; flex-direction: column; gap: 1.6rem; margin-top: 2.5rem; }
-    .why-item {
-      display: flex;
-      gap: 1.1rem;
-      align-items: flex-start;
-    }
-    .why-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--orange);
-      margin-top: 7px;
-      flex-shrink: 0;
-      box-shadow: 0 0 8px currentColor;
-    }
-    .why-item h4 { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; letter-spacing: -0.01em; }
-    .why-item p { font-size: 0.83rem; color: var(--muted2); line-height: 1.65; }
-
-    /* ─── COVERAGE ─── */
-    .coverage-section {
-      background: var(--bg2);
-      padding: 7rem 3rem;
-    }
-    .coverage-header {
-      text-align: center;
-      margin-bottom: 4rem;
-    }
-    .coverage-header .section-eyebrow { justify-content: center; }
-    .coverage-header .section-title { margin-bottom: 0.8rem; }
-    .coverage-header .section-desc { margin: 0 auto; text-align: center; }
-
-    /* Map + panel grid */
-    .coverage-layout {
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      gap: 2rem;
-      align-items: start;
-    }
-
-    /* Real map embed */
-    .coverage-map-wrap {
-      position: relative;
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.07);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
-      aspect-ratio: 16/10;
-    }
-    .coverage-map-wrap iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
-      filter: saturate(0.85) brightness(0.9);
-      transition: filter 0.4s;
-    }
-    .coverage-map-wrap:hover iframe { filter: saturate(1) brightness(1); }
-    /* Badge on map */
-    .map-badge {
-      position: absolute;
-      top: 1rem; left: 1rem;
-      background: rgba(5,5,13,0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(232,130,10,0.25);
-      border-radius: 10px;
-      padding: 0.6rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      pointer-events: none;
-      z-index: 2;
-    }
-    .map-badge-dot {
-      width: 8px; height: 8px;
-      background: var(--orange);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--orange);
-      animation: blink 2s ease-in-out infinite;
-    }
-    .map-badge-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: var(--text);
-      letter-spacing: 0.08em;
-    }
-
-    /* Right panel */
-    .coverage-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .panel-label {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 0.25rem;
-    }
-
-    /* Route cards */
-    .route-card {
-      background: var(--surface);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: var(--radius);
-      padding: 1.1rem 1.3rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: border-color 0.25s, background 0.25s, transform 0.2s;
-      text-decoration: none;
-      color: inherit;
-      position: relative;
-      overflow: hidden;
-    }
-    .route-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: var(--card-accent, var(--orange));
-      transform: scaleY(0);
-      transform-origin: center;
-      transition: transform 0.3s ease;
-      border-radius: 0 2px 2px 0;
-    }
-    .route-card:hover {
-      border-color: rgba(255,255,255,0.1);
-      background: var(--surface2);
-      transform: translateX(4px);
-    }
-    .route-card:hover::before { transform: scaleY(1); }
-
-    .route-card-icon {
-      font-size: 1.4rem;
-      width: 40px; height: 40px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .route-card-body { flex: 1; min-width: 0; }
-    .route-card-name {
-      font-weight: 600;
-      font-size: 0.88rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 0.15rem;
-    }
-    .route-card-desc {
-      font-size: 0.75rem;
-      color: var(--muted2);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .route-card-wa {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      background: rgba(37,211,102,0.1);
-      border: 1px solid rgba(37,211,102,0.2);
-      color: #25D366;
-      font-size: 0.72rem;
-      font-weight: 600;
-      padding: 0.35rem 0.65rem;
-      border-radius: 6px;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: background 0.2s, border-color 0.2s;
-      letter-spacing: 0.02em;
-    }
-    .route-card:hover .route-card-wa {
-      background: rgba(37,211,102,0.18);
-      border-color: rgba(37,211,102,0.4);
-    }
-    .wa-icon { font-size: 0.9rem; }
-
-    /* "Otro destino" card */
-    .route-card-other {
-      background: transparent;
-      border: 1.5px dashed rgba(255,255,255,0.1);
-      border-radius: var(--radius);
-      padding: 1.1rem 1.3rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      text-decoration: none;
-      color: inherit;
-      transition: border-color 0.25s, background 0.25s, transform 0.2s;
-    }
-    .route-card-other:hover {
-      border-color: rgba(232,130,10,0.4);
-      background: rgba(232,130,10,0.04);
-      transform: translateX(4px);
-    }
-    .route-card-other .route-card-icon {
-      background: rgba(232,130,10,0.08);
-    }
-    .route-card-other .route-card-name { color: var(--muted2); }
-    .route-card-other .route-card-desc { color: var(--muted); }
-    .route-other-arrow {
-      font-size: 1rem;
-      color: var(--orange);
-      opacity: 0.7;
-      flex-shrink: 0;
-      transition: transform 0.2s, opacity 0.2s;
-    }
-    .route-card-other:hover .route-other-arrow {
-      transform: translateX(4px);
-      opacity: 1;
-    }
-
-    /* ─── CTA ─── */
-    .cta-section {
-      background: var(--bg);
-      text-align: center;
-      padding: 8rem 3rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .cta-section::before {
-      content: '';
-      position: absolute;
-      top: -40%; left: 50%;
-      transform: translateX(-50%);
-      width: 600px; height: 600px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(232,130,10,0.06), transparent 70%);
-      pointer-events: none;
-    }
-    .cta-inner { max-width: 680px; margin: 0 auto; position: relative; z-index: 2; }
-    .cta-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(3.2rem, 6vw, 5.5rem);
-      line-height: 0.95;
-      margin-bottom: 1.5rem;
-      letter-spacing: 0.02em;
-    }
-    .cta-title span { color: var(--orange); }
-    .cta-desc {
-      font-size: 1rem;
-      color: var(--muted2);
-      margin-bottom: 2.5rem;
-      line-height: 1.75;
-    }
-    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
     .btn-large {
       font-weight: 600;
       font-size: 0.9rem;
@@ -1023,6 +531,9 @@
       text-decoration: none;
       transition: all 0.25s;
       letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn-primary.btn-large {
       background: var(--orange);
@@ -1044,1032 +555,950 @@
       transform: translateY(-2px);
     }
 
+    /* ═══════════════════════════════════════════
+       STATS STRIP
+    ═══════════════════════════════════════════ */
+    .stats-strip {
+      background: var(--surface);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 2rem 3rem;
+      position: relative; overflow: hidden;
+    }
+    .stats-strip::before {
+      content: '';
+      position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(232,130,10,0.35), transparent);
+    }
+    .stats-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem; text-align: center;
+    }
+    .stat-item { position: relative; }
+    .stat-item + .stat-item::before {
+      content: '';
+      position: absolute; left: -0.75rem; top: 20%; bottom: 20%;
+      width: 1px; background: rgba(255,255,255,0.05);
+    }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem; color: var(--orange);
+      line-height: 1; letter-spacing: 0.03em;
+    }
+    .stat-bar {
+      width: 24px; height: 2px; border-radius: 1px;
+      background: rgba(232,130,10,0.25);
+      margin: 0.4rem auto;
+    }
+    .stat-label {
+      font-size: 0.67rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+
+    /* ═══════════════════════════════════════════
+       SECTION BASE
+    ═══════════════════════════════════════════ */
+    section { padding: 7rem 3rem; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-eyebrow {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .section-eyebrow::before {
+      content: '';
+      display: inline-block; width: 20px; height: 1.5px;
+      background: var(--orange);
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      line-height: 0.95; letter-spacing: 0.02em; margin-bottom: 1rem;
+    }
+    .section-desc {
+      font-size: 0.95rem; color: var(--muted2);
+      max-width: 520px; line-height: 1.75;
+    }
+
+    /* ═══════════════════════════════════════════
+       SERVICES
+    ═══════════════════════════════════════════ */
+    .services-section { background: var(--bg2); }
+
+    .srv-eyebrow {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 1rem;
+    }
+    .srv-eyebrow::before {
+      content: ''; width: 20px; height: 1.5px;
+      background: var(--orange); display: inline-block;
+    }
+    .srv-header {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: end; margin-bottom: 3rem;
+    }
+    .srv-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      line-height: 0.95; letter-spacing: 0.02em;
+    }
+    .srv-title span { color: var(--orange); }
+    .srv-desc {
+      font-size: 0.95rem; color: var(--muted2);
+      line-height: 1.75; font-weight: 300;
+    }
+
+    .srv-tabs {
+      display: flex; gap: 0.5rem; margin-bottom: 2.5rem; flex-wrap: wrap;
+    }
+    .srv-tab {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.45rem 1.1rem;
+      border-radius: 100px; border: 1px solid rgba(255,255,255,0.1);
+      background: transparent; color: var(--muted); cursor: pointer;
+      transition: all 0.2s; font-family: 'Inter', sans-serif;
+      touch-action: manipulation;
+    }
+    .srv-tab:hover { border-color: var(--orange); color: var(--orange); }
+    .srv-tab.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+    .srv-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+    }
+    .srv-card {
+      background: var(--surface); border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px; overflow: hidden;
+      position: relative; cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .srv-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.1);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    .srv-card.featured {
+      grid-column: span 2;
+      border: 1.5px solid var(--orange);
+    }
+    .srv-card-accent { height: 3px; width: 100%; }
+    .srv-card-inner { padding: 1.6rem 1.8rem 1.8rem; }
+    .srv-card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 1.2rem; gap: 0.5rem;
+    }
+    .srv-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .srv-badge {
+      font-size: 0.62rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.3rem 0.65rem; border-radius: 100px;
+      white-space: nowrap;
+    }
+    .srv-badge-orange { background: rgba(232,130,10,0.12); color: var(--orange); }
+    .srv-badge-green  { background: rgba(34,197,94,0.1); color: #22C55E; }
+    .srv-badge-blue   { background: rgba(26,79,160,0.15); color: #6699FF; }
+    .srv-card-title {
+      font-weight: 600; font-size: 1rem;
+      margin-bottom: 0.5rem; line-height: 1.2;
+    }
+    .srv-card-desc {
+      font-size: 0.82rem; color: var(--muted2);
+      line-height: 1.7; margin-bottom: 1.4rem;
+    }
+    .srv-card-footer {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .srv-card-link {
+      font-size: 0.75rem; font-weight: 600; color: var(--orange);
+      letter-spacing: 0.05em; text-transform: uppercase;
+      display: flex; align-items: center; gap: 0.4rem;
+      text-decoration: none; transition: gap 0.2s;
+    }
+    .srv-card:hover .srv-card-link { gap: 0.7rem; }
+    .srv-card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .srv-tag {
+      font-size: 0.62rem; color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 100px; padding: 0.2rem 0.55rem;
+    }
+
+    /* Featured card */
+    .srv-card.featured .srv-card-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; align-items: end;
+    }
+    .srv-card.featured .srv-card-desc { margin-bottom: 0; }
+    .srv-featured-stats {
+      display: flex; flex-direction: column;
+      gap: 1rem; align-items: flex-end;
+    }
+    .srv-stat-item { text-align: right; }
+    .srv-stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem; color: var(--orange);
+      line-height: 1; letter-spacing: 0.03em;
+    }
+    .srv-stat-lbl {
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    .srv-bottom {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem; margin-top: 1.25rem;
+    }
+    .srv-extra {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.25rem; margin-top: 1.25rem;
+    }
+
+    /* ═══════════════════════════════════════════
+       COVERAGE
+    ═══════════════════════════════════════════ */
+    .coverage-section { background: var(--bg2); }
+    .coverage-header {
+      text-align: center; margin-bottom: 4rem;
+    }
+    .coverage-header .section-eyebrow { justify-content: center; }
+    .coverage-header .section-desc { margin: 0 auto; text-align: center; }
+
+    .coverage-layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 2rem;
+      align-items: start;
+    }
+    .coverage-map-wrap {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+      aspect-ratio: 16/10;
+    }
+    .coverage-map-wrap iframe {
+      width: 100%; height: 100%;
+      border: none; display: block;
+      filter: saturate(0.85) brightness(0.9);
+      transition: filter 0.4s;
+    }
+    .coverage-map-wrap:hover iframe { filter: saturate(1) brightness(1); }
+    .map-badge {
+      position: absolute; top: 1rem; left: 1rem;
+      background: rgba(5,5,13,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(232,130,10,0.25);
+      border-radius: 10px; padding: 0.6rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      pointer-events: none; z-index: 2;
+    }
+    .map-badge-dot {
+      width: 8px; height: 8px;
+      background: var(--orange); border-radius: 50%;
+      box-shadow: 0 0 8px var(--orange);
+      animation: blink 2s ease-in-out infinite;
+    }
+    .map-badge-label {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    .coverage-panel {
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .panel-label {
+      font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.25rem;
+    }
+
+    .route-card {
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.3rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: border-color 0.25s, background 0.25s, transform 0.2s;
+      text-decoration: none; color: inherit;
+      position: relative; overflow: hidden;
+      touch-action: manipulation;
+    }
+    .route-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--card-accent, var(--orange));
+      transform: scaleY(0); transform-origin: center;
+      transition: transform 0.3s ease;
+      border-radius: 0 2px 2px 0;
+    }
+    .route-card:hover {
+      border-color: rgba(255,255,255,0.1);
+      background: var(--surface2);
+      transform: translateX(4px);
+    }
+    .route-card:hover::before { transform: scaleY(1); }
+    .route-card-icon {
+      font-size: 1.4rem;
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .route-card-body { flex: 1; min-width: 0; }
+    .route-card-name {
+      font-weight: 600; font-size: 0.88rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 0.15rem;
+    }
+    .route-card-desc {
+      font-size: 0.75rem; color: var(--muted2);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .route-card-wa {
+      display: flex; align-items: center; gap: 0.35rem;
+      background: rgba(37,211,102,0.1);
+      border: 1px solid rgba(37,211,102,0.2);
+      color: #25D366; font-size: 0.72rem; font-weight: 600;
+      padding: 0.35rem 0.65rem; border-radius: 6px;
+      white-space: nowrap; flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .route-card:hover .route-card-wa {
+      background: rgba(37,211,102,0.18);
+      border-color: rgba(37,211,102,0.4);
+    }
+
+    .route-card-other {
+      background: transparent;
+      border: 1.5px dashed rgba(255,255,255,0.1);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.3rem;
+      display: flex; align-items: center; gap: 1rem;
+      text-decoration: none; color: inherit;
+      transition: border-color 0.25s, background 0.25s, transform 0.2s;
+      touch-action: manipulation;
+    }
+    .route-card-other:hover {
+      border-color: rgba(232,130,10,0.4);
+      background: rgba(232,130,10,0.04);
+      transform: translateX(4px);
+    }
+    .route-card-other .route-card-icon { background: rgba(232,130,10,0.08); }
+    .route-card-other .route-card-name { color: var(--muted2); }
+    .route-card-other .route-card-desc { color: var(--muted); }
+    .route-other-arrow {
+      font-size: 1rem; color: var(--orange); opacity: 0.7;
+      flex-shrink: 0; transition: transform 0.2s, opacity 0.2s;
+    }
+    .route-card-other:hover .route-other-arrow { transform: translateX(4px); opacity: 1; }
+
+    /* ═══════════════════════════════════════════
+       CTA
+    ═══════════════════════════════════════════ */
+    .cta-section {
+      background: var(--bg);
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; top: -40%; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,130,10,0.06), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner {
+      max-width: 680px; margin: 0 auto;
+      position: relative; z-index: 2;
+    }
+    .cta-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.2rem, 8vw, 5.5rem);
+      line-height: 0.95; margin-bottom: 1.5rem; letter-spacing: 0.02em;
+    }
+    .cta-title span { color: var(--orange); }
+    .cta-desc {
+      font-size: 1rem; color: var(--muted2);
+      margin-bottom: 2.5rem; line-height: 1.75;
+    }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
     .contact-strip {
-      display: flex;
-      justify-content: center;
-      gap: 3rem;
-      margin-top: 4rem;
-      flex-wrap: wrap;
+      display: flex; justify-content: center;
+      gap: 3rem; margin-top: 4rem; flex-wrap: wrap;
     }
     .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 0.7rem;
-      color: var(--muted2);
-      font-size: 0.88rem;
+      display: flex; align-items: center; gap: 0.7rem;
+      color: var(--muted2); font-size: 0.88rem;
     }
     .contact-item strong { color: var(--text); }
     .ci-icon { font-size: 1.1rem; }
+    .contact-sublabel {
+      font-size: 0.68rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
 
-    /* ─── FOOTER ─── */
+    /* ═══════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════ */
     footer {
       background: #030308;
       border-top: 1px solid rgba(255,255,255,0.04);
       padding: 2.5rem 3rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
     }
     footer img { height: 36px; filter: brightness(0.85); }
     .footer-copy { font-size: 0.75rem; color: var(--muted); }
     .footer-links { display: flex; gap: 1.5rem; }
     .footer-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.75rem;
-      transition: color 0.2s;
+      color: var(--muted); text-decoration: none;
+      font-size: 0.75rem; transition: color 0.2s;
     }
     .footer-links a:hover { color: var(--orange); }
 
-    /* ─── GSAP INIT STATES ─── */
+    /* ═══════════════════════════════════════════
+       ANIMATIONS
+    ═══════════════════════════════════════════ */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    @keyframes spin1 { to { transform: rotate(360deg); } }
+    @keyframes spin2 { to { transform: rotate(-360deg); } }
+
     .reveal-up    { opacity: 0; transform: translateY(40px); }
     .reveal-left  { opacity: 0; transform: translateX(-50px); }
     .reveal-right { opacity: 0; transform: translateX(50px); }
 
-   /* ─── RESPONSIVE COMPLETO ─── */
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — TABLET GRANDE (≤1100px)
+    ═══════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .coverage-layout { grid-template-columns: 1fr 360px; }
+      .hero-inner { gap: 2.5rem; }
+    }
 
-/* ── Tablet grande (max 1100px) ── */
-@media (max-width: 1100px) {
-  .hero-inner-v2 { gap: 2.5rem; }
-  .why-inner { gap: 4rem; }
-  .coverage-layout { grid-template-columns: 1fr 360px; }
-}
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — TABLET (≤900px)
+    ═══════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      /* Cursor off */
+      .cursor, .cursor-ring { display: none; }
+      body { cursor: auto; }
 
-/* ── Tablet (max 900px) ── */
-@media (max-width: 900px) {
+      /* Nav */
+      nav { padding: 1rem 1.5rem; }
+      nav.scrolled { padding: 0.65rem 1.5rem; }
+      .nav-links { display: none; }
 
-  /* NAV */
-  nav { padding: 1rem 1.5rem; }
-  nav.scrolled { padding: 0.65rem 1.5rem; }
-  .nav-links { display: none; }
+      /* Hero */
+      .hero { padding: 7rem 1.5rem 0; min-height: auto; }
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 2rem; padding-bottom: 3rem;
+      }
+      .hero-right { order: -1; opacity: 1; }
+      .hero-title { font-size: clamp(4rem, 14vw, 6rem); }
+      .hero-title .t-ghost { font-size: clamp(0.9rem, 3vw, 1.2rem); }
+      .hero-sub { max-width: 100%; }
 
-  /* CURSOR */
-  .cursor, .cursor-ring { display: none; }
-  body { cursor: auto; }
+      /* Stats */
+      .stats-strip { padding: 1.8rem 1.5rem; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .stat-item + .stat-item::before { display: none; }
 
-  /* HERO V2 */
-  .hero {
-    padding: 7rem 1.5rem 0;
-    min-height: auto;
-  }
-  .hero-inner-v2 {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-    padding-bottom: 3rem;
-  }
-  .hero-right { order: -1; }
-  .hero-title-v2 {
-    font-size: clamp(4rem, 14vw, 6rem);
-  }
-  .hero-title-v2 .t-ghost {
-    font-size: clamp(1rem, 3.5vw, 1.4rem);
-  }
-  .hero-sub-v2 { max-width: 100%; }
-  .hero-cards-pair { grid-template-columns: 1fr 1fr; }
-  .hero-card-main-head { flex-wrap: wrap; gap: 0.75rem; }
+      /* Sections */
+      section { padding: 4.5rem 1.5rem; }
+      .coverage-section { padding: 4.5rem 1.5rem; }
 
-  /* HERO VIEJO (por si acaso) */
-  .hero-inner { grid-template-columns: 1fr; }
-  .hero-orb-wrap { order: -1; }
-  .orb-scene { width: 220px; height: 220px; }
-  .orb-ring-2 { inset: 18px; }
-  .orb-ring-3 { inset: 36px; }
-  .orb-ring-4 { inset: 52px; }
-  .orb-center { inset: 66px; }
-  .orb-center-text { font-size: 2rem; }
-  .hero-badge { display: none; }
+      /* Services */
+      .srv-header { grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+      .srv-grid { grid-template-columns: 1fr; }
+      .srv-card.featured { grid-column: span 1; }
+      .srv-card.featured .srv-card-inner {
+        grid-template-columns: 1fr;
+      }
+      .srv-featured-stats {
+        flex-direction: row; align-items: flex-start;
+        flex-wrap: wrap; gap: 1.5rem;
+      }
+      .srv-stat-item { text-align: left; }
+      .srv-bottom { grid-template-columns: 1fr; }
+      .srv-extra { grid-template-columns: 1fr; }
 
-  /* STATS */
-  .stats-inner-v2 { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-  .stats-inner    { grid-template-columns: repeat(2, 1fr); }
+      /* Coverage */
+      .coverage-layout { grid-template-columns: 1fr; }
+      .coverage-map-wrap { aspect-ratio: 16/9; }
+      .coverage-header { margin-bottom: 2.5rem; }
 
-  /* SECTION BASE */
-  section { padding: 4rem 1.5rem; }
-  .coverage-section { padding: 4rem 1.5rem; }
+      /* CTA */
+      .cta-actions { flex-direction: column; align-items: center; }
+      .btn-large { width: 100%; max-width: 320px; }
+      .contact-strip { gap: 1.5rem; }
 
-  /* SERVICES */
-  .srv-header { grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
-  .srv-grid { grid-template-columns: 1fr; }
-  .srv-card.featured { grid-column: span 1; }
-  .srv-card.featured .srv-card-inner { grid-template-columns: 1fr; }
-  .srv-featured-stats { align-items: flex-start; flex-direction: row; flex-wrap: wrap; gap: 1.5rem; }
-  .srv-bottom { grid-template-columns: 1fr; }
-  .srv-extra  { grid-template-columns: 1fr; }
+      /* Footer */
+      footer {
+        flex-direction: column; text-align: center;
+        gap: 1rem; padding: 2rem 1.5rem;
+      }
+      .footer-links { justify-content: center; }
+    }
 
-  /* WHY */
-  .why-inner { grid-template-columns: 1fr; gap: 3rem; }
-  .why-visual { height: auto; min-height: 320px; }
-  .why-card-float:nth-child(1) { position: relative; top: auto; left: auto; width: 100%; margin-bottom: 1rem; }
-  .why-card-float:nth-child(2) { position: relative; bottom: auto; right: auto; width: 100%; margin-bottom: 1rem; }
-  .why-card-float:nth-child(3) { position: relative; top: auto; left: auto; transform: none; width: 100%; }
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — MÓVIL (≤600px)
+    ═══════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      /* Nav */
+      nav { padding: 0.9rem 1.2rem; }
+      .nav-cta { font-size: 0.72rem; padding: 0.4rem 0.9rem; }
 
-  /* COVERAGE */
-  .coverage-layout { grid-template-columns: 1fr; }
-  .coverage-map-wrap { aspect-ratio: 16/9; }
+      /* Video */
+      .video-sticky { min-height: 60vh; }
+      .video-caption-wrap { bottom: 12%; }
 
-  /* CTA */
-  .cta-section { padding: 5rem 1.5rem; }
-  .cta-actions { flex-direction: column; align-items: center; }
-  .btn-large { width: 100%; max-width: 320px; text-align: center; }
-  .contact-strip { gap: 1.5rem; flex-direction: column; align-items: center; }
+      /* Hero */
+      .hero { padding: 5.5rem 1.2rem 0; }
+      .hero-inner { gap: 1.5rem; padding-bottom: 2.5rem; }
+      .hero-title { font-size: clamp(3.5rem, 18vw, 5rem); }
+      .hero-title .t-ghost { display: none; }
+      .hero-actions { flex-direction: column; gap: 0.75rem; width: 100%; }
+      .hero-actions .btn-primary,
+      .hero-actions .btn-ghost { width: 100%; }
+      .hero-trust { gap: 0.75rem; }
 
-  /* FOOTER */
-  footer {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-    padding: 2rem 1.5rem;
-  }
-  .footer-links { justify-content: center; }
-}
+      .hero-card-main { padding: 1.3rem; }
+      .hero-card-main-head { margin-bottom: 1rem; }
+      .hero-cards-pair { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+      .hero-card-sm { padding: 1rem; }
+      .hero-card-sm-num { font-size: 1.6rem; }
+      .hero-online { display: none; }
 
-/* ── Móvil (max 600px) ── */
-@media (max-width: 600px) {
+      /* Stats */
+      .stats-strip { padding: 1.5rem 1.2rem; }
+      .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .stat-num { font-size: 2rem; }
 
-  /* NAV */
-  nav { padding: 0.9rem 1.2rem; }
-  .nav-cta { font-size: 0.72rem; padding: 0.4rem 0.9rem; }
+      /* Sections */
+      section { padding: 3.5rem 1.2rem; }
+      .coverage-section { padding: 3.5rem 1.2rem; }
 
-  /* VIDEO */
-  .video-caption h2 { font-size: clamp(2.2rem, 10vw, 3.5rem); }
-  .video-caption p  { font-size: 0.88rem; }
+      /* Services */
+      .srv-tabs { gap: 0.4rem; }
+      .srv-tab { font-size: 0.65rem; padding: 0.35rem 0.8rem; }
+      .srv-card-inner { padding: 1.2rem 1.3rem 1.4rem; }
+      .srv-featured-stats { flex-direction: column; gap: 0.75rem; }
+      .srv-stat-num { font-size: 1.8rem; }
 
-  /* HERO */
-  .hero { padding: 6rem 1.2rem 0; }
-  .hero-inner-v2 { gap: 2rem; padding-bottom: 2.5rem; }
-  .hero-title-v2 { font-size: clamp(3.5rem, 18vw, 5rem); }
-  .hero-title-v2 .t-ghost { display: none; }
-  .hero-actions-v2 { flex-direction: column; gap: 0.75rem; }
-  .hero-actions-v2 .btn-primary,
-  .hero-actions-v2 .btn-ghost {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    display: flex;
-  }
-  .hero-trust { flex-wrap: wrap; gap: 0.75rem; }
-  .hero-cards-pair { grid-template-columns: 1fr; gap: 0.75rem; }
-  .hero-card-main { padding: 1.3rem; }
-  .hero-card-main-head { flex-direction: column; align-items: flex-start; }
-  .hero-online { align-self: flex-end; margin-top: -2rem; }
-  .hero-route-row { padding: 0.7rem 0.8rem; }
-  .hero-route-tag { font-size: 0.9rem; }
+      /* Coverage */
+      .coverage-map-wrap { aspect-ratio: 4/3; }
+      .coverage-panel { gap: 0.6rem; }
+      .route-card { padding: 0.9rem 1rem; }
+      .route-card-name { font-size: 0.82rem; }
+      .route-card-wa { font-size: 0.68rem; padding: 0.3rem 0.55rem; }
+      .route-card-desc { display: none; }
 
-  /* STATS */
-  .stats-strip-v2 { padding: 1.5rem 1.2rem; }
-  .stats-inner-v2 { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-  .stat-v2-num { font-size: 2rem; }
+      /* CTA */
+      .cta-title { font-size: clamp(2.5rem, 10vw, 3.8rem); }
+      .cta-desc { font-size: 0.9rem; }
+      .contact-strip { gap: 1.2rem; margin-top: 2.5rem; }
 
-  /* SECTIONS */
-  section { padding: 3.5rem 1.2rem; }
-  .coverage-section { padding: 3.5rem 1.2rem; }
-  .section-title { font-size: clamp(2rem, 8vw, 3rem); }
+      /* Footer */
+      footer { padding: 1.8rem 1.2rem; }
+    }
 
-  /* SERVICES */
-  .srv-tabs { gap: 0.4rem; }
-  .srv-tab  { font-size: 0.65rem; padding: 0.35rem 0.8rem; }
-  .srv-card-inner { padding: 1.2rem 1.3rem 1.4rem; }
-  .srv-featured-stats { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
-  .srv-stat-num { font-size: 1.8rem; }
+    /* ═══════════════════════════════════════════
+       RESPONSIVE — MÓVIL PEQUEÑO (≤380px)
+    ═══════════════════════════════════════════ */
+    @media (max-width: 380px) {
+      .hero-title { font-size: 3.2rem; }
+      .hero-mini-orb { width: 44px; height: 44px; }
+      .hero-mini-orb-text { font-size: 1.1rem; }
+      .hero-cards-pair { grid-template-columns: 1fr 1fr; }
+      .stat-num { font-size: 1.7rem; }
+      .nav-cta { display: none; }
+      .srv-card-head { flex-direction: column; gap: 0.5rem; }
+      .route-card-wa { display: none; }
+      .route-other-arrow { display: block; }
+    }
 
-  /* WHY */
-  .why-list { gap: 1.2rem; }
+    /* ═══════════════════════════════════════════
+       MOTION PREFERENCES
+    ═══════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
 
-  /* COVERAGE */
-  .coverage-header { margin-bottom: 2.5rem; }
-  .coverage-panel { gap: 0.6rem; }
-  .route-card { padding: 0.9rem 1rem; }
-  .route-card-name { font-size: 0.82rem; }
-  .route-card-wa { font-size: 0.68rem; padding: 0.3rem 0.55rem; }
+    /* ═══════════════════════════════════════════
+       LANDSCAPE PHONE
+    ═══════════════════════════════════════════ */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .video-sticky { height: 100vw; min-height: 300px; max-height: 500px; }
+      .hero { padding-top: 5rem; min-height: auto; }
+      .hero-inner { padding-bottom: 2rem; }
+    }
 
-  /* CTA */
-  .cta-section { padding: 4rem 1.2rem; }
-  .cta-title { font-size: clamp(2.5rem, 9vw, 3.8rem); }
-  .contact-strip { gap: 1.2rem; }
-
-  /* FOOTER */
-  footer { padding: 1.8rem 1.2rem; }
-}
-
-/* ── Móvil pequeño (max 380px) ── */
-@media (max-width: 380px) {
-  .hero-title-v2 { font-size: 3.2rem; }
-  .hero-mini-orb { width: 44px; height: 44px; }
-  .hero-mini-orb-text { font-size: 1.1rem; }
-  .stats-inner-v2 { grid-template-columns: 1fr 1fr; }
-  .stat-v2-num { font-size: 1.7rem; }
-  .nav-cta { display: none; }
-}
-
-/* ── Reduced motion ── */
-@media (prefers-reduced-motion: reduce) {
-  .orb-ring-1, .orb-ring-2, .orb-ring-3, .orb-ring-4,
-  .orb-glow, .orb-particle, .scroll-mouse-dot,
-  .hero-eyebrow-pill-dot, .hero-online-dot,
-  .badge-dot, .map-badge-dot { animation: none; }
-}
+    /* ═══════════════════════════════════════════
+       TOUCH DEVICE IMPROVEMENTS
+    ═══════════════════════════════════════════ */
+    @media (hover: none) {
+      .route-card:hover { transform: none; }
+      .srv-card:hover { transform: none; }
+      .btn-primary:hover { transform: none; }
+      .btn-ghost:hover { transform: none; }
+      .btn-large:hover { transform: none; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Custom cursor -->
+  <!-- Custom cursor (desktop only) -->
   <div class="cursor" id="cursor"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <!-- NAV -->
+  <!-- ══════════════════ NAV ══════════════════ -->
   <nav id="mainNav">
     <a class="nav-logo" href="#">
       <img src="logo t30.png" alt="T30 Logo" />
     </a>
     <ul class="nav-links">
       <li><a href="#servicios">Servicios</a></li>
-      <li><a href="#nosotros">Nosotros</a></li>
       <li><a href="#cobertura">Cobertura</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <a href="tel:+525500000000" class="nav-cta">📞 Llamar ahora</a>
   </nav>
 
-  <!-- ══════════════════════════════════════════════════════ -->
-  <!--  1. VIDEO SECTION — PRIMERO                           -->
-  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- ══════════════════ VIDEO ══════════════════ -->
   <section class="video-section" id="video">
     <div class="video-sticky">
-        <video id="scrollVideo" muted playsinline autoplay loop preload="auto" webkit-playsinline>
-          <source src="upscaled-video1.mp4" type="video/mp4" />
-        </video>
+      <video id="scrollVideo" muted playsinline autoplay loop preload="auto" webkit-playsinline>
+        <source src="upscaled-video1.mp4" type="video/mp4" />
+      </video>
+      <div class="video-overlay">
+        <div class="video-caption-wrap">
+          <div class="video-caption">
+            <h2 id="videoCaption">Conectando el <span>AIFA</span><br>con México</h2>
+            <p id="videoCaptionSub">Servicio de traslado premium desde el aeropuerto más moderno del país</p>
+          </div>
+        </div>
+      </div>
+      <div class="video-phases" id="phaseDots">
+        <div class="phase-dot active"></div>
+        <div class="phase-dot"></div>
+        <div class="phase-dot"></div>
+      </div>
+    </div>
+  </section>
 
-        <div class="video-overlay">
-          <!-- Caption that cycles automatically -->
-          <div class="video-caption-wrap">
-            <div class="video-caption">
-              <h2 id="videoCaption">Conectando el <span>AIFA</span><br>con México</h2>
-              <p id="videoCaptionSub">Servicio de traslado premium desde el aeropuerto más moderno del país</p>
+  <!-- ══════════════════ HERO ══════════════════ -->
+  <header class="hero" id="inicio">
+    <div class="hero-inner">
+
+      <!-- LEFT -->
+      <div class="hero-copy">
+        <div class="hero-eyebrow-pill">
+          <div class="hero-eyebrow-pill-dot"></div>
+          <span class="hero-eyebrow-pill-text">Base T30 · AIFA · Zumpango</span>
+        </div>
+
+        <h1 class="hero-title">
+          <span class="t-orange">T30</span>
+          <span class="t-outline">AIFA</span>
+          <span class="t-ghost">AEROPUERTO FELIPE ÁNGELES</span>
+        </h1>
+
+        <div class="hero-divider"></div>
+
+        <p class="hero-sub">
+          Tu traslado seguro desde el <strong>Aeropuerto Internacional Felipe Ángeles</strong>. Servicio profesional, puntual y confiable — las 24 horas.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#contacto" class="btn-primary">✈️ Solicitar taxi</a>
+          <a href="#servicios" class="btn-ghost">Ver servicios →</a>
+        </div>
+
+        <div class="hero-trust">
+          <div class="hero-avatars">
+            <div class="hero-avatar" style="background:#E8820A;">JL</div>
+            <div class="hero-avatar" style="background:#1A4FA0;">MR</div>
+            <div class="hero-avatar" style="background:#C8188C;">AP</div>
+            <div class="hero-avatar" style="background:#BFA030;">GS</div>
+          </div>
+          <div class="hero-trust-text">
+            <strong>+500 viajeros este mes</strong>
+            Confían en la Base T30 AIFA
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="hero-right">
+        <div class="hero-card-main">
+          <div class="hero-card-main-head">
+            <div class="hero-mini-orb">
+              <span class="hero-mini-orb-text">T30</span>
+            </div>
+            <div class="hero-card-meta">
+              <div class="hero-card-name">Base T30 · AIFA</div>
+              <div class="hero-card-loc">Aeropuerto Felipe Ángeles</div>
+            </div>
+            <div class="hero-online">
+              <div class="hero-online-dot"></div>
+              Activo
+            </div>
+          </div>
+
+          <div class="hero-route-row">
+            <div class="hero-route-icon" style="background:rgba(232,130,10,0.1);">🏙️</div>
+            <div class="hero-route-body">
+              <div class="hero-route-from">AIFA →</div>
+              <div class="hero-route-dest">Ciudad de México</div>
+            </div>
+            <div class="hero-route-tag">Tarifa fija</div>
+          </div>
+
+          <div class="hero-route-row">
+            <div class="hero-route-icon" style="background:rgba(200,24,140,0.1);">🌆</div>
+            <div class="hero-route-body">
+              <div class="hero-route-from">AIFA →</div>
+              <div class="hero-route-dest">Pachuca · Hidalgo</div>
+            </div>
+            <div class="hero-route-tag">Directo</div>
+          </div>
+
+          <div class="hero-route-row">
+            <div class="hero-route-icon" style="background:rgba(26,79,160,0.1);">✈️</div>
+            <div class="hero-route-body">
+              <div class="hero-route-from">AIFA ↔</div>
+              <div class="hero-route-dest">AICM · Conexión</div>
+            </div>
+            <div class="hero-route-tag">24/7</div>
+          </div>
+        </div>
+
+        <div class="hero-cards-pair">
+          <div class="hero-card-sm">
+            <div class="hero-card-sm-icon">🛡️</div>
+            <div class="hero-card-sm-num">100%</div>
+            <div class="hero-card-sm-lbl">Operadores certificados</div>
+          </div>
+          <div class="hero-card-sm">
+            <div class="hero-card-sm-icon">📍</div>
+            <div class="hero-card-sm-num">T30</div>
+            <div class="hero-card-sm-lbl">Base concesionada AIFA</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ══════════════════ STATS ══════════════════ -->
+  <div class="stats-strip">
+    <div class="stats-inner">
+      <div class="stat-item reveal-up">
+        <div class="stat-num">24/7</div>
+        <div class="stat-bar"></div>
+        <div class="stat-label">Servicio continuo</div>
+      </div>
+      <div class="stat-item reveal-up">
+        <div class="stat-num">T30</div>
+        <div class="stat-bar"></div>
+        <div class="stat-label">Base autorizada AIFA</div>
+      </div>
+      <div class="stat-item reveal-up">
+        <div class="stat-num">100%</div>
+        <div class="stat-bar"></div>
+        <div class="stat-label">Operadores certificados</div>
+      </div>
+      <div class="stat-item reveal-up">
+        <div class="stat-num">+10</div>
+        <div class="stat-bar"></div>
+        <div class="stat-label">Rutas disponibles</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SERVICES ══════════════════ -->
+  <section class="services-section" id="servicios">
+    <div class="section-inner">
+
+      <div class="srv-eyebrow">Lo que ofrecemos</div>
+
+      <div class="srv-header">
+        <h2 class="srv-title">Servicios de<br><span>traslado</span></h2>
+        <p class="srv-desc">
+          Desde traslados individuales hasta servicio para grupos y empresas — cubrimos todas tus necesidades de movilidad en el AIFA, las 24 horas del día.
+        </p>
+      </div>
+
+      <div class="srv-tabs">
+        <button class="srv-tab active" onclick="filterCards('todos', this)">Todos</button>
+        <button class="srv-tab" onclick="filterCards('individual', this)">Individual</button>
+        <button class="srv-tab" onclick="filterCards('grupos', this)">Grupos</button>
+        <button class="srv-tab" onclick="filterCards('rutas', this)">Rutas fijas</button>
+      </div>
+
+      <!-- Tarjeta featured -->
+      <div class="srv-grid">
+        <div class="srv-card featured" data-cat="todos rutas">
+          <div class="srv-card-accent" style="background: linear-gradient(90deg, #E8820A, #C8188C);"></div>
+          <div class="srv-card-inner">
+            <div>
+              <div class="srv-card-head">
+                <div class="srv-icon" style="background:rgba(232,130,10,0.12); font-size:1.5rem;">✈️</div>
+                <span class="srv-badge srv-badge-orange">Base oficial</span>
+              </div>
+              <div class="srv-card-title">Traslado desde el AIFA</div>
+              <p class="srv-card-desc">Llegadas y salidas con monitoreo de vuelos en tiempo real. Tu taxi te espera cuando aterrizas — sin filas, sin sorpresas, con tarifa acordada antes de subir.</p>
+              <div class="srv-card-footer">
+                <a href="#contacto" class="srv-card-link">Reservar ahora →</a>
+                <div class="srv-card-tags">
+                  <span class="srv-tag">Tarifa fija</span>
+                  <span class="srv-tag">Sin espera</span>
+                </div>
+              </div>
+            </div>
+            <div class="srv-featured-stats">
+              <div class="srv-stat-item">
+                <div class="srv-stat-num">24/7</div>
+                <div class="srv-stat-lbl">Disponibilidad</div>
+              </div>
+              <div class="srv-stat-item">
+                <div class="srv-stat-num">+10</div>
+                <div class="srv-stat-lbl">Rutas activas</div>
+              </div>
+              <div class="srv-stat-item">
+                <div class="srv-stat-num">0</div>
+                <div class="srv-stat-lbl">Costos ocultos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fila 2 -->
+      <div class="srv-bottom">
+        <div class="srv-card" data-cat="todos rutas">
+          <div class="srv-card-accent" style="background:#1A4FA0;"></div>
+          <div class="srv-card-inner">
+            <div class="srv-card-head">
+              <div class="srv-icon" style="background:rgba(26,79,160,0.12); font-size:1.5rem;">🏙️</div>
+              <span class="srv-badge srv-badge-blue">Popular</span>
+            </div>
+            <div class="srv-card-title">Rutas a CDMX</div>
+            <p class="srv-card-desc">Servicio directo al centro y zonas metropolitanas con tarifas fijas y transparentes.</p>
+            <div class="srv-card-footer">
+              <a href="#cobertura" class="srv-card-link">Ver rutas →</a>
+              <div class="srv-card-tags"><span class="srv-tag">Directo</span></div>
             </div>
           </div>
         </div>
 
-        <!-- Phase indicator dots -->
-        <div class="video-phases" id="phaseDots">
-          <div class="phase-dot active"></div>
-          <div class="phase-dot"></div>
-          <div class="phase-dot"></div>
+        <div class="srv-card" data-cat="todos grupos">
+          <div class="srv-card-accent" style="background:#C8188C;"></div>
+          <div class="srv-card-inner">
+            <div class="srv-card-head">
+              <div class="srv-icon" style="background:rgba(200,24,140,0.1); font-size:1.5rem;">👥</div>
+              <span class="srv-badge srv-badge-orange">Corporativo</span>
+            </div>
+            <div class="srv-card-title">Grupos y empresas</div>
+            <p class="srv-card-desc">Unidades de mayor capacidad para traslados corporativos, convenciones y grupos de viaje.</p>
+            <div class="srv-card-footer">
+              <a href="#contacto" class="srv-card-link">Cotizar →</a>
+              <div class="srv-card-tags"><span class="srv-tag">Van disponible</span></div>
+            </div>
+          </div>
         </div>
 
+        <div class="srv-card" data-cat="todos individual">
+          <div class="srv-card-accent" style="background:#BFA030;"></div>
+          <div class="srv-card-inner">
+            <div class="srv-card-head">
+              <div class="srv-icon" style="background:rgba(191,160,48,0.1); font-size:1.5rem;">🌙</div>
+              <span class="srv-badge srv-badge-green">Activo ahora</span>
+            </div>
+            <div class="srv-card-title">Servicio nocturno</div>
+            <p class="srv-card-desc">Vuelos nocturnos y madrugadas sin excepción. Operamos todos los días del año.</p>
+            <div class="srv-card-footer">
+              <a href="#contacto" class="srv-card-link">Llamar →</a>
+              <div class="srv-card-tags"><span class="srv-tag">Sin horario</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fila 3 -->
+      <div class="srv-extra">
+        <div class="srv-card" data-cat="todos individual">
+          <div class="srv-card-accent" style="background:#E8820A;"></div>
+          <div class="srv-card-inner">
+            <div class="srv-card-head">
+              <div class="srv-icon" style="background:rgba(232,130,10,0.1); font-size:1.5rem;">📅</div>
+              <span class="srv-badge srv-badge-orange">Recomendado</span>
+            </div>
+            <div class="srv-card-title">Reserva anticipada</div>
+            <p class="srv-card-desc">Programa tu traslado con tiempo y viaja sin preocupaciones. Confirmación inmediata por WhatsApp.</p>
+            <div class="srv-card-footer">
+              <a href="#contacto" class="srv-card-link">Reservar →</a>
+              <div class="srv-card-tags"><span class="srv-tag">Confirmación inmediata</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="srv-card" data-cat="todos rutas">
+          <div class="srv-card-accent" style="background:#1A4FA0;"></div>
+          <div class="srv-card-inner">
+            <div class="srv-card-head">
+              <div class="srv-icon" style="background:rgba(26,79,160,0.1); font-size:1.5rem;">🗺️</div>
+              <span class="srv-badge srv-badge-blue">Zona local</span>
+            </div>
+            <div class="srv-card-title">Zona norte del Estado</div>
+            <p class="srv-card-desc">Cobertura en Zumpango, Tecámac, Tizayuca, Pachuca y toda la zona de influencia del AIFA.</p>
+            <div class="srv-card-footer">
+              <a href="#cobertura" class="srv-card-link">Ver mapa →</a>
+              <div class="srv-card-tags">
+                <span class="srv-tag">Edomex</span>
+                <span class="srv-tag">Hidalgo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════════════════ -->
-  <!--  2. HERO — DESPUÉS DEL VIDEO                         -->
-  <!-- ══════════════════════════════════════════════════════ -->
-  <!-- ══ HERO + STATS ══════════════════════════════════════ -->
-
-<style>
-  /* ── Hero overrides ── */
-  .hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    padding: 8rem 3rem 0;
-  }
-  .hero::before {
-    content: '';
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse 55% 70% at 80% 40%, rgba(26,79,160,0.2) 0%, transparent 65%),
-      radial-gradient(ellipse 35% 50% at 10% 65%, rgba(200,24,140,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 35% at 50% 0%, rgba(232,130,10,0.08) 0%, transparent 55%);
-    pointer-events: none;
-  }
-  .hero::after {
-    content: '';
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
-    background-size: 70px 70px;
-    pointer-events: none;
-  }
-
-  .hero-inner-v2 {
-    position: relative; z-index: 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-    padding-bottom: 5rem;
-  }
-
-  /* ── Eyebrow pill ── */
-  .hero-eyebrow-pill {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(232,130,10,0.08);
-    border: 1px solid rgba(232,130,10,0.22);
-    border-radius: 100px;
-    padding: 0.3rem 1rem 0.3rem 0.6rem;
-    margin-bottom: 1.6rem;
-  }
-  .hero-eyebrow-pill-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: var(--orange);
-    animation: blink 2s ease-in-out infinite;
-    flex-shrink: 0;
-  }
-  .hero-eyebrow-pill-text {
-    font-size: 0.68rem; font-weight: 600;
-    letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--orange);
-  }
-
-  /* ── Title v2 ── */
-  .hero-title-v2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(5.5rem, 11vw, 8.5rem);
-    line-height: 0.88;
-    letter-spacing: 0.01em;
-    margin-bottom: 0.4rem;
-  }
-  .hero-title-v2 .t-orange { color: var(--orange); display: block; }
-  .hero-title-v2 .t-outline {
-    color: transparent;
-    -webkit-text-stroke: 2px rgba(184,204,255,0.5);
-    display: block;
-  }
-  .hero-title-v2 .t-ghost {
-    font-size: clamp(1.4rem, 2.8vw, 2.2rem);
-    letter-spacing: 0.2em;
-    color: rgba(242,242,245,0.12);
-    display: block;
-    margin-top: 0.2rem;
-  }
-
-  .hero-divider {
-    width: 48px; height: 2px;
-    background: linear-gradient(90deg, var(--orange), transparent);
-    margin: 1.6rem 0;
-    border-radius: 2px;
-  }
-
-  .hero-sub-v2 {
-    font-size: 0.95rem; font-weight: 300;
-    color: var(--muted2);
-    max-width: 380px;
-    line-height: 1.8;
-    margin-bottom: 2.2rem;
-  }
-  .hero-sub-v2 strong { color: var(--text); font-weight: 500; }
-
-  .hero-actions-v2 {
-    display: flex; gap: 0.9rem; align-items: center; flex-wrap: wrap;
-  }
-
-  /* Trust row */
-  .hero-trust {
-    display: flex; align-items: center; gap: 1rem;
-    margin-top: 2.2rem;
-    padding-top: 1.6rem;
-    border-top: 1px solid rgba(255,255,255,0.05);
-  }
-  .hero-avatars { display: flex; }
-  .hero-avatar {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 2px solid var(--bg);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.58rem; font-weight: 700; color: #fff;
-  }
-  .hero-avatar + .hero-avatar { margin-left: -8px; }
-  .hero-trust-text {
-    font-size: 0.75rem; color: var(--muted); line-height: 1.4;
-  }
-  .hero-trust-text strong { color: var(--text); font-weight: 600; display: block; }
-
-  /* ── Right column cards ── */
-  .hero-right {
-    display: flex; flex-direction: column; gap: 1rem;
-    opacity: 0;
-  }
-
-  .hero-card-main {
-    background: rgba(15,15,34,0.85);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 16px; padding: 1.8rem;
-    position: relative; overflow: hidden;
-  }
-  .hero-card-main::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--orange), var(--magenta), var(--blue));
-  }
-  .hero-card-main-head {
-    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.4rem;
-  }
-  .hero-mini-orb {
-    width: 54px; height: 54px; border-radius: 50%;
-    border: 2px solid rgba(232,130,10,0.4);
-    display: flex; align-items: center; justify-content: center;
-    position: relative; flex-shrink: 0;
-  }
-  .hero-mini-orb::after {
-    content: '';
-    position: absolute; inset: -7px; border-radius: 50%;
-    border: 1px solid rgba(232,130,10,0.12);
-  }
-  .hero-mini-orb-text {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.35rem; color: var(--orange); letter-spacing: 0.05em;
-  }
-  .hero-card-meta { flex: 1; }
-  .hero-card-name {
-    font-weight: 700; font-size: 1rem; color: var(--text);
-    letter-spacing: -0.01em; margin-bottom: 0.2rem;
-  }
-  .hero-card-loc {
-    font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em;
-  }
-  .hero-online {
-    display: flex; align-items: center; gap: 0.4rem;
-    font-size: 0.66rem; font-weight: 600;
-    color: #22C55E; letter-spacing: 0.08em; text-transform: uppercase;
-    flex-shrink: 0;
-  }
-  .hero-online-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #22C55E;
-    animation: blink 2s ease-in-out infinite;
-  }
-
-  .hero-route-row {
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 10px; padding: 0.85rem 1rem;
-    display: flex; align-items: center; gap: 0.8rem;
-    margin-bottom: 0.55rem;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .hero-route-row:last-child { margin-bottom: 0; }
-  .hero-route-row:hover {
-    background: rgba(255,255,255,0.04);
-    border-color: rgba(232,130,10,0.15);
-  }
-  .hero-route-icon {
-    width: 34px; height: 34px; border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; flex-shrink: 0;
-  }
-  .hero-route-from { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.1rem; }
-  .hero-route-dest { font-size: 0.84rem; font-weight: 600; color: var(--text); }
-  .hero-route-tag {
-    margin-left: auto; flex-shrink: 0;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.1rem; color: var(--orange); letter-spacing: 0.05em;
-  }
-
-  .hero-cards-pair {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
-  }
-  .hero-card-sm {
-    background: rgba(15,15,34,0.85);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 14px; padding: 1.1rem 1.2rem;
-  }
-  .hero-card-sm-icon { font-size: 1.2rem; margin-bottom: 0.7rem; }
-  .hero-card-sm-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.9rem; color: var(--orange);
-    letter-spacing: 0.03em; line-height: 1; margin-bottom: 0.2rem;
-  }
-  .hero-card-sm-lbl {
-    font-size: 0.67rem; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.09em;
-  }
-
-  /* ── Stats strip v2 ── */
-  .stats-strip-v2 {
-    background: var(--surface);
-    border-top: 1px solid rgba(255,255,255,0.04);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    padding: 2rem 3rem;
-    position: relative; overflow: hidden;
-  }
-  .stats-strip-v2::before {
-    content: '';
-    position: absolute; top: 0; left: 20%; right: 20%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(232,130,10,0.35), transparent);
-  }
-  .stats-inner-v2 {
-    max-width: 1200px; margin: 0 auto;
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem; text-align: center;
-  }
-  .stat-v2 { position: relative; }
-  .stat-v2 + .stat-v2::before {
-    content: '';
-    position: absolute; left: -0.75rem; top: 20%; bottom: 20%;
-    width: 1px; background: rgba(255,255,255,0.05);
-  }
-  .stat-v2-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem; color: var(--orange);
-    line-height: 1; letter-spacing: 0.03em;
-  }
-  .stat-v2-bar {
-    width: 24px; height: 2px; border-radius: 1px;
-    background: rgba(232,130,10,0.25);
-    margin: 0.4rem auto;
-  }
-  .stat-v2-lbl {
-    font-size: 0.67rem; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.1em;
-  }
-
-  @media (max-width: 900px) {
-    .hero-inner-v2 { grid-template-columns: 1fr; padding-bottom: 3rem; }
-    .hero-right { order: -1; }
-    .hero-cards-pair { grid-template-columns: 1fr 1fr; }
-    .stats-inner-v2 { grid-template-columns: repeat(2, 1fr); }
-    .hero-title-v2 { font-size: 5rem; }
-  }
-</style>
-
-<header class="hero" id="inicio">
-  <div class="hero-inner-v2">
-
-    <!-- LEFT: copy -->
-    <div class="hero-copy">
-      <div class="hero-eyebrow-pill">
-        <div class="hero-eyebrow-pill-dot"></div>
-        <span class="hero-eyebrow-pill-text">Base T30 · AIFA · Zumpango</span>
-      </div>
-
-      <h1 class="hero-title-v2">
-        <span class="t-orange">T30</span>
-        <span class="t-outline">AIFA</span>
-        <span class="t-ghost">AEROPUERTO FELIPE ÁNGELES</span>
-      </h1>
-
-      <div class="hero-divider"></div>
-
-      <p class="hero-sub-v2">
-        Tu traslado seguro desde el <strong>Aeropuerto Internacional Felipe Ángeles</strong>. Servicio profesional, puntual y confiable — las 24 horas.
-      </p>
-
-      <div class="hero-actions-v2">
-        <a href="#contacto" class="btn-primary">✈️ Solicitar taxi</a>
-        <a href="#servicios" class="btn-ghost">Ver servicios →</a>
-      </div>
-
-      <div class="hero-trust">
-        <div class="hero-avatars">
-          <div class="hero-avatar" style="background:#E8820A;">JL</div>
-          <div class="hero-avatar" style="background:#1A4FA0;">MR</div>
-          <div class="hero-avatar" style="background:#C8188C;">AP</div>
-          <div class="hero-avatar" style="background:#BFA030;">GS</div>
-        </div>
-        <div class="hero-trust-text">
-          <strong>+500 viajeros este mes</strong>
-          Confían en la Base T30 AIFA
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT: cards -->
-    <div class="hero-right">
-
-      <div class="hero-card-main">
-        <div class="hero-card-main-head">
-          <div class="hero-mini-orb">
-            <span class="hero-mini-orb-text">T30</span>
-          </div>
-          <div class="hero-card-meta">
-            <div class="hero-card-name">Base T30 · AIFA</div>
-            <div class="hero-card-loc">Aeropuerto Felipe Ángeles</div>
-          </div>
-          <div class="hero-online">
-            <div class="hero-online-dot"></div>
-            Activo
-          </div>
-        </div>
-
-        <div class="hero-route-row">
-          <div class="hero-route-icon" style="background:rgba(232,130,10,0.1);">🏙️</div>
-          <div>
-            <div class="hero-route-from">AIFA →</div>
-            <div class="hero-route-dest">Ciudad de México</div>
-          </div>
-          <div class="hero-route-tag">Tarifa fija</div>
-        </div>
-
-        <div class="hero-route-row">
-          <div class="hero-route-icon" style="background:rgba(200,24,140,0.1);">🌆</div>
-          <div>
-            <div class="hero-route-from">AIFA →</div>
-            <div class="hero-route-dest">Pachuca · Hidalgo</div>
-          </div>
-          <div class="hero-route-tag">Directo</div>
-        </div>
-
-        <div class="hero-route-row">
-          <div class="hero-route-icon" style="background:rgba(26,79,160,0.1);">✈️</div>
-          <div>
-            <div class="hero-route-from">AIFA ↔</div>
-            <div class="hero-route-dest">AICM · Conexión</div>
-          </div>
-          <div class="hero-route-tag">24/7</div>
-        </div>
-      </div>
-
-      <div class="hero-cards-pair">
-        <div class="hero-card-sm">
-          <div class="hero-card-sm-icon">🛡️</div>
-          <div class="hero-card-sm-num">100%</div>
-          <div class="hero-card-sm-lbl">Operadores certificados</div>
-        </div>
-        <div class="hero-card-sm">
-          <div class="hero-card-sm-icon">📍</div>
-          <div class="hero-card-sm-num">T30</div>
-          <div class="hero-card-sm-lbl">Base concesionada AIFA</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</header>
-
-<!-- STATS -->
-<div class="stats-strip-v2">
-  <div class="stats-inner-v2">
-    <div class="stat-v2 reveal-up">
-      <div class="stat-v2-num">24/7</div>
-      <div class="stat-v2-bar"></div>
-      <div class="stat-v2-lbl">Servicio continuo</div>
-    </div>
-    <div class="stat-v2 reveal-up">
-      <div class="stat-v2-num">T30</div>
-      <div class="stat-v2-bar"></div>
-      <div class="stat-v2-lbl">Base autorizada AIFA</div>
-    </div>
-    <div class="stat-v2 reveal-up">
-      <div class="stat-v2-num">100%</div>
-      <div class="stat-v2-bar"></div>
-      <div class="stat-v2-lbl">Operadores certificados</div>
-    </div>
-    <div class="stat-v2 reveal-up">
-      <div class="stat-v2-num">+10</div>
-      <div class="stat-v2-bar"></div>
-      <div class="stat-v2-lbl">Rutas disponibles</div>
-    </div>
-  </div>
-</div>
-
-<script>
-  gsap.to('.hero-right', { opacity: 1, y: 0, duration: 1, delay: 0.3, ease: 'power3.out' });
-</script>
-
-  <!-- SERVICES -->
-  <!-- SERVICES -->
-<section class="services-section" id="servicios">
-  <div class="section-inner">
-
-    <style>
-      .srv-eyebrow {
-        display: flex; align-items: center; gap: 0.6rem;
-        font-size: 0.7rem; font-weight: 600;
-        letter-spacing: 0.25em; text-transform: uppercase;
-        color: #E8820A; margin-bottom: 1rem;
-      }
-      .srv-eyebrow::before { content:''; width:20px; height:1.5px; background:#E8820A; display:inline-block; }
-
-      .srv-header {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
-        align-items: end; margin-bottom: 4rem;
-      }
-      .srv-title {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: clamp(2.8rem, 5vw, 4.2rem);
-        line-height: 0.95; letter-spacing: 0.02em; margin-bottom: 0;
-        color: var(--text);
-      }
-      .srv-title span { color: #E8820A; }
-      .srv-desc {
-        font-size: 0.95rem; color: var(--muted2);
-        line-height: 1.75; font-weight: 300; max-width: 440px;
-      }
-
-      .srv-tabs {
-        display: flex; gap: 0.5rem; margin-bottom: 2.5rem; flex-wrap: wrap;
-      }
-      .srv-tab {
-        font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
-        text-transform: uppercase; padding: 0.45rem 1.1rem;
-        border-radius: 100px; border: 1px solid rgba(255,255,255,0.1);
-        background: transparent; color: var(--muted); cursor: pointer;
-        transition: all 0.2s; font-family: 'Inter', sans-serif;
-      }
-      .srv-tab:hover { border-color: #E8820A; color: #E8820A; }
-      .srv-tab.active { background: #E8820A; border-color: #E8820A; color: #fff; }
-
-      .srv-grid {
-        display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
-      }
-      .srv-card {
-        background: var(--surface); border: 1px solid rgba(255,255,255,0.05);
-        border-radius: 16px; padding: 0; overflow: hidden;
-        position: relative; cursor: pointer;
-        transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
-      }
-      .srv-card:hover {
-        transform: translateY(-4px);
-        border-color: rgba(255,255,255,0.1);
-        box-shadow: 0 16px 40px rgba(0,0,0,0.35);
-      }
-      .srv-card.featured {
-        grid-column: span 2;
-        border: 1.5px solid #E8820A;
-      }
-      .srv-card-accent { height: 3px; width: 100%; }
-      .srv-card-inner { padding: 1.6rem 1.8rem 1.8rem; }
-      .srv-card-head {
-        display: flex; align-items: flex-start;
-        justify-content: space-between; margin-bottom: 1.2rem;
-      }
-      .srv-icon {
-        width: 46px; height: 46px; border-radius: 12px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 1.3rem; flex-shrink: 0;
-      }
-      .srv-badge {
-        font-size: 0.62rem; font-weight: 700;
-        letter-spacing: 0.12em; text-transform: uppercase;
-        padding: 0.3rem 0.65rem; border-radius: 100px;
-      }
-      .srv-badge-orange { background: rgba(232,130,10,0.12); color: #E8820A; }
-      .srv-badge-green  { background: rgba(34,197,94,0.1);   color: #22C55E; }
-      .srv-badge-blue   { background: rgba(26,79,160,0.15);  color: #6699FF; }
-
-      .srv-card-title {
-        font-weight: 600; font-size: 1rem; color: var(--text);
-        margin-bottom: 0.5rem; line-height: 1.2;
-      }
-      .srv-card-desc {
-        font-size: 0.82rem; color: var(--muted2);
-        line-height: 1.7; margin-bottom: 1.4rem;
-      }
-      .srv-card-footer {
-        display: flex; align-items: center; justify-content: space-between;
-      }
-      .srv-card-link {
-        font-size: 0.75rem; font-weight: 600; color: #E8820A;
-        letter-spacing: 0.05em; text-transform: uppercase;
-        display: flex; align-items: center; gap: 0.4rem;
-        text-decoration: none; transition: gap 0.2s;
-      }
-      .srv-card:hover .srv-card-link { gap: 0.7rem; }
-      .srv-card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-      .srv-tag {
-        font-size: 0.62rem; color: var(--muted);
-        border: 1px solid rgba(255,255,255,0.07);
-        border-radius: 100px; padding: 0.2rem 0.55rem;
-      }
-
-      /* Featured layout */
-      .srv-card.featured .srv-card-inner {
-        display: grid; grid-template-columns: 1fr 1fr;
-        gap: 1.5rem; align-items: end;
-      }
-      .srv-card.featured .srv-card-desc { margin-bottom: 0; }
-      .srv-featured-stats {
-        display: flex; flex-direction: column;
-        gap: 1rem; align-items: flex-end;
-      }
-      .srv-stat-item { text-align: right; }
-      .srv-stat-num {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 2.2rem; color: #E8820A;
-        line-height: 1; letter-spacing: 0.03em;
-      }
-      .srv-stat-lbl {
-        font-size: 0.68rem; color: var(--muted);
-        letter-spacing: 0.08em; text-transform: uppercase;
-      }
-
-      .srv-bottom {
-        display: grid; grid-template-columns: repeat(3, 1fr);
-        gap: 1.25rem; margin-top: 1.25rem;
-      }
-      .srv-extra {
-        display: grid; grid-template-columns: 1fr 1fr;
-        gap: 1.25rem; margin-top: 1.25rem;
-      }
-
-      @media (max-width: 900px) {
-        .srv-header { grid-template-columns: 1fr; gap: 1.5rem; }
-        .srv-grid { grid-template-columns: 1fr; }
-        .srv-card.featured { grid-column: span 1; }
-        .srv-card.featured .srv-card-inner { grid-template-columns: 1fr; }
-        .srv-featured-stats { align-items: flex-start; }
-        .srv-bottom { grid-template-columns: 1fr; }
-        .srv-extra { grid-template-columns: 1fr; }
-      }
-    </style>
-
-    <div class="srv-eyebrow">Lo que ofrecemos</div>
-
-    <div class="srv-header">
-      <div>
-        <h2 class="srv-title">Servicios de<br><span>traslado</span></h2>
-      </div>
-      <p class="srv-desc">
-        Desde traslados individuales hasta servicio para grupos y empresas — cubrimos todas tus necesidades de movilidad en el AIFA, las 24 horas del día.
-      </p>
-    </div>
-
-    <!-- Filtros -->
-    <div class="srv-tabs">
-      <button class="srv-tab active" onclick="filterCards('todos', this)">Todos</button>
-      <button class="srv-tab" onclick="filterCards('individual', this)">Individual</button>
-      <button class="srv-tab" onclick="filterCards('grupos', this)">Grupos</button>
-      <button class="srv-tab" onclick="filterCards('rutas', this)">Rutas fijas</button>
-    </div>
-
-    <!-- Tarjeta principal -->
-    <div class="srv-grid" id="srvGrid">
-      <div class="srv-card featured" data-cat="todos rutas">
-        <div class="srv-card-accent" style="background: linear-gradient(90deg, #E8820A, #C8188C);"></div>
-        <div class="srv-card-inner">
-          <div>
-            <div class="srv-card-head">
-              <div class="srv-icon" style="background:rgba(232,130,10,0.12); font-size:1.5rem;">✈️</div>
-              <span class="srv-badge srv-badge-orange">Base oficial</span>
-            </div>
-            <div class="srv-card-title">Traslado desde el AIFA</div>
-            <p class="srv-card-desc">Llegadas y salidas con monitoreo de vuelos en tiempo real. Tu taxi te espera cuando aterrizas — sin filas, sin sorpresas, con tarifa acordada antes de subir.</p>
-            <div class="srv-card-footer">
-              <a href="#contacto" class="srv-card-link">Reservar ahora →</a>
-              <div class="srv-card-tags">
-                <span class="srv-tag">Tarifa fija</span>
-                <span class="srv-tag">Sin espera</span>
-              </div>
-            </div>
-          </div>
-          <div class="srv-featured-stats">
-            <div class="srv-stat-item">
-              <div class="srv-stat-num">24/7</div>
-              <div class="srv-stat-lbl">Disponibilidad</div>
-            </div>
-            <div class="srv-stat-item">
-              <div class="srv-stat-num">+10</div>
-              <div class="srv-stat-lbl">Rutas activas</div>
-            </div>
-            <div class="srv-stat-item">
-              <div class="srv-stat-num">0</div>
-              <div class="srv-stat-lbl">Costos ocultos</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Segunda fila: 3 tarjetas -->
-    <div class="srv-bottom">
-
-      <div class="srv-card" data-cat="todos rutas">
-        <div class="srv-card-accent" style="background:#1A4FA0;"></div>
-        <div class="srv-card-inner">
-          <div class="srv-card-head">
-            <div class="srv-icon" style="background:rgba(26,79,160,0.12); font-size:1.5rem;">🏙️</div>
-            <span class="srv-badge srv-badge-blue">Popular</span>
-          </div>
-          <div class="srv-card-title">Rutas a CDMX</div>
-          <p class="srv-card-desc">Servicio directo al centro y zonas metropolitanas con tarifas fijas y transparentes.</p>
-          <div class="srv-card-footer">
-            <a href="#cobertura" class="srv-card-link">Ver rutas →</a>
-            <div class="srv-card-tags"><span class="srv-tag">Directo</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="srv-card" data-cat="todos grupos">
-        <div class="srv-card-accent" style="background:#C8188C;"></div>
-        <div class="srv-card-inner">
-          <div class="srv-card-head">
-            <div class="srv-icon" style="background:rgba(200,24,140,0.1); font-size:1.5rem;">👥</div>
-            <span class="srv-badge srv-badge-orange">Corporativo</span>
-          </div>
-          <div class="srv-card-title">Grupos y empresas</div>
-          <p class="srv-card-desc">Unidades de mayor capacidad para traslados corporativos, convenciones y grupos de viaje.</p>
-          <div class="srv-card-footer">
-            <a href="#contacto" class="srv-card-link">Cotizar →</a>
-            <div class="srv-card-tags"><span class="srv-tag">Van disponible</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="srv-card" data-cat="todos individual">
-        <div class="srv-card-accent" style="background:#BFA030;"></div>
-        <div class="srv-card-inner">
-          <div class="srv-card-head">
-            <div class="srv-icon" style="background:rgba(191,160,48,0.1); font-size:1.5rem;">🌙</div>
-            <span class="srv-badge srv-badge-green">Activo ahora</span>
-          </div>
-          <div class="srv-card-title">Servicio nocturno</div>
-          <p class="srv-card-desc">Vuelos nocturnos y madrugadas sin excepción. Operamos todos los días del año.</p>
-          <div class="srv-card-footer">
-            <a href="#contacto" class="srv-card-link">Llamar →</a>
-            <div class="srv-card-tags"><span class="srv-tag">Sin horario</span></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Tercera fila: 2 tarjetas -->
-    <div class="srv-extra">
-
-      <div class="srv-card" data-cat="todos individual">
-        <div class="srv-card-accent" style="background:#E8820A;"></div>
-        <div class="srv-card-inner">
-          <div class="srv-card-head">
-            <div class="srv-icon" style="background:rgba(232,130,10,0.1); font-size:1.5rem;">📅</div>
-            <span class="srv-badge srv-badge-orange">Recomendado</span>
-          </div>
-          <div class="srv-card-title">Reserva anticipada</div>
-          <p class="srv-card-desc">Programa tu traslado con tiempo y viaja sin preocupaciones. Confirmación inmediata por WhatsApp.</p>
-          <div class="srv-card-footer">
-            <a href="#contacto" class="srv-card-link">Reservar →</a>
-            <div class="srv-card-tags"><span class="srv-tag">Confirmación inmediata</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="srv-card" data-cat="todos rutas">
-        <div class="srv-card-accent" style="background:#1A4FA0;"></div>
-        <div class="srv-card-inner">
-          <div class="srv-card-head">
-            <div class="srv-icon" style="background:rgba(26,79,160,0.1); font-size:1.5rem;">🗺️</div>
-            <span class="srv-badge srv-badge-blue">Zona local</span>
-          </div>
-          <div class="srv-card-title">Zona norte del Estado</div>
-          <p class="srv-card-desc">Cobertura en Zumpango, Tecámac, Tizayuca, Pachuca y toda la zona de influencia del AIFA.</p>
-          <div class="srv-card-footer">
-            <a href="#cobertura" class="srv-card-link">Ver mapa →</a>
-            <div class="srv-card-tags">
-              <span class="srv-tag">Edomex</span>
-              <span class="srv-tag">Hidalgo</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <script>
-    function filterCards(cat, btn) {
-      document.querySelectorAll('.srv-tab').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      const allCards = document.querySelectorAll('.srv-card');
-      allCards.forEach(card => {
-        const cats = card.dataset.cat || '';
-        const show = cat === 'todos' || cats.includes(cat);
-        card.style.transition = 'opacity 0.3s, transform 0.3s';
-        if (show) {
-          card.style.opacity = '1';
-          card.style.transform = '';
-          card.style.pointerEvents = '';
-        } else {
-          card.style.opacity = '0.15';
-          card.style.transform = 'scale(0.97)';
-          card.style.pointerEvents = 'none';
-        }
-      });
-    }
-  </script>
-</section>
-
-  <!-- COVERAGE -->
+  <!-- ══════════════════ COVERAGE ══════════════════ -->
   <section class="coverage-section" id="cobertura">
     <div class="section-inner">
 
-      <!-- Header centrado -->
       <div class="coverage-header reveal-up">
         <p class="section-eyebrow">Cobertura</p>
         <h2 class="section-title">A donde necesites ir</h2>
-        <p class="section-desc">Saliendo del AIFA llegamos a los principales destinos del Estado de México, CDMX e Hidalgo. Selecciona tu ruta y contáctanos directo por WhatsApp.</p>
+        <p class="section-desc">Saliendo del AIFA llegamos a los principales destinos del Estado de México, CDMX e Hidalgo.</p>
       </div>
 
-      <!-- Mapa + panel de rutas -->
       <div class="coverage-layout">
 
-        <!-- Mapa real -->
         <div class="coverage-map-wrap reveal-left">
           <div class="map-badge">
             <div class="map-badge-dot"></div>
@@ -2084,11 +1513,9 @@
           </iframe>
         </div>
 
-        <!-- Panel de rutas -->
         <div class="coverage-panel reveal-right">
           <p class="panel-label">Selecciona tu destino</p>
 
-          <!-- CDMX -->
           <a class="route-card" style="--card-accent:var(--orange)"
              href="https://wa.me/525500000000?text=Hola%2C%20necesito%20un%20taxi%20del%20AIFA%20a%20Ciudad%20de%20M%C3%A9xico"
              target="_blank" rel="noopener">
@@ -2097,12 +1524,9 @@
               <div class="route-card-name">AIFA → Ciudad de México</div>
               <div class="route-card-desc">Centro, norte, oriente y zona metropolitana</div>
             </div>
-            <div class="route-card-wa">
-              <span class="wa-icon">💬</span> WhatsApp
-            </div>
+            <div class="route-card-wa"><span>💬</span> WhatsApp</div>
           </a>
 
-          <!-- Zona Norte Edomex -->
           <a class="route-card" style="--card-accent:var(--blue)"
              href="https://wa.me/525500000000?text=Hola%2C%20necesito%20un%20taxi%20del%20AIFA%20a%20la%20Zona%20Norte%20del%20Estado%20de%20M%C3%A9xico"
              target="_blank" rel="noopener">
@@ -2111,12 +1535,9 @@
               <div class="route-card-name">AIFA → Zona norte Edomex</div>
               <div class="route-card-desc">Zumpango, Tecámac, Nextlalpan, Jaltenco</div>
             </div>
-            <div class="route-card-wa">
-              <span class="wa-icon">💬</span> WhatsApp
-            </div>
+            <div class="route-card-wa"><span>💬</span> WhatsApp</div>
           </a>
 
-          <!-- Pachuca -->
           <a class="route-card" style="--card-accent:var(--magenta)"
              href="https://wa.me/525500000000?text=Hola%2C%20necesito%20un%20taxi%20del%20AIFA%20a%20Pachuca%20e%20Hidalgo"
              target="_blank" rel="noopener">
@@ -2125,12 +1546,9 @@
               <div class="route-card-name">AIFA → Pachuca e Hidalgo</div>
               <div class="route-card-desc">Capital del estado y municipios aledaños</div>
             </div>
-            <div class="route-card-wa">
-              <span class="wa-icon">💬</span> WhatsApp
-            </div>
+            <div class="route-card-wa"><span>💬</span> WhatsApp</div>
           </a>
 
-          <!-- AICM -->
           <a class="route-card" style="--card-accent:var(--gold)"
              href="https://wa.me/525500000000?text=Hola%2C%20necesito%20traslado%20entre%20el%20AIFA%20y%20el%20AICM"
              target="_blank" rel="noopener">
@@ -2139,35 +1557,31 @@
               <div class="route-card-name">AIFA ↔ AICM</div>
               <div class="route-card-desc">Conexión entre aeropuertos bajo demanda</div>
             </div>
-            <div class="route-card-wa">
-              <span class="wa-icon">💬</span> WhatsApp
-            </div>
+            <div class="route-card-wa"><span>💬</span> WhatsApp</div>
           </a>
 
-          <!-- Otro destino -->
           <a class="route-card-other"
              href="https://wa.me/525500000000?text=Hola%2C%20me%20dirijo%20a%20otro%20destino%20desde%20el%20AIFA%2C%20%C2%BFme%20pueden%20cotizar%3F"
              target="_blank" rel="noopener">
             <div class="route-card-icon">🗺️</div>
             <div class="route-card-body">
               <div class="route-card-name">¿Te diriges a otro lado?</div>
-              <div class="route-card-desc">Escríbenos tu destino y te cotizamos al momento</div>
+              <div class="route-card-desc">Escríbenos tu destino y te cotizamos</div>
             </div>
             <div class="route-other-arrow">→</div>
           </a>
-
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CTA -->
+  <!-- ══════════════════ CTA ══════════════════ -->
   <section class="cta-section" id="contacto">
     <div class="cta-inner">
       <p class="section-eyebrow reveal-up" style="justify-content:center">¿Listo para viajar?</p>
       <h2 class="cta-title reveal-up">Tu taxi en el <span>AIFA</span><br>te está esperando</h2>
       <p class="cta-desc reveal-up">
-        Llámanos o escríbenos y te atendemos de inmediato. Traslados seguros, puntuales y a precio justo — desde y hacia el Aeropuerto Internacional Felipe Ángeles.
+        Llámanos o escríbenos y te atendemos de inmediato. Traslados seguros, puntuales y a precio justo.
       </p>
       <div class="cta-actions reveal-up">
         <a href="tel:+525500000000" class="btn-primary btn-large">📞 Llamar ahora</a>
@@ -2176,21 +1590,30 @@
       <div class="contact-strip">
         <div class="contact-item reveal-up">
           <span class="ci-icon">📞</span>
-          <div><div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Teléfono</div><strong>55 0000 0000</strong></div>
+          <div>
+            <div class="contact-sublabel">Teléfono</div>
+            <strong>55 0000 0000</strong>
+          </div>
         </div>
         <div class="contact-item reveal-up">
           <span class="ci-icon">📍</span>
-          <div><div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Ubicación</div><strong>Base T30 · AIFA, Zumpango</strong></div>
+          <div>
+            <div class="contact-sublabel">Ubicación</div>
+            <strong>Base T30 · AIFA, Zumpango</strong>
+          </div>
         </div>
         <div class="contact-item reveal-up">
           <span class="ci-icon">🕐</span>
-          <div><div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Horario</div><strong>24 hrs · 7 días</strong></div>
+          <div>
+            <div class="contact-sublabel">Horario</div>
+            <strong>24 hrs · 7 días</strong>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ══════════════════ FOOTER ══════════════════ -->
   <footer>
     <img src="logo t30.png" alt="T30" />
     <p class="footer-copy">© 2025 Base de Taxis T30 · AIFA · Todos los derechos reservados</p>
@@ -2200,51 +1623,47 @@
     </div>
   </footer>
 
-  <!-- ─── SCRIPTS ─── -->
+  <!-- ═══════════════════════════════════════════
+       SCRIPTS
+  ═══════════════════════════════════════════ -->
   <script>
-    /* ════════════════════════════════════════════
-       CUSTOM CURSOR
-    ════════════════════════════════════════════ */
+    /* ── Custom cursor (only on pointer devices) ── */
     const cursor     = document.getElementById('cursor');
     const cursorRing = document.getElementById('cursorRing');
     let cx = 0, cy = 0, rx = 0, ry = 0;
 
-    document.addEventListener('mousemove', e => {
-      cx = e.clientX; cy = e.clientY;
-      cursor.style.left = cx + 'px';
-      cursor.style.top  = cy + 'px';
-    });
-    // Lag on ring for smooth feel
-    (function animRing() {
-      rx += (cx - rx) * 0.12;
-      ry += (cy - ry) * 0.12;
-      cursorRing.style.left = rx + 'px';
-      cursorRing.style.top  = ry + 'px';
-      requestAnimationFrame(animRing);
-    })();
+    if (window.matchMedia('(pointer: fine)').matches) {
+      document.addEventListener('mousemove', e => {
+        cx = e.clientX; cy = e.clientY;
+        cursor.style.left = cx + 'px';
+        cursor.style.top  = cy + 'px';
+      });
+      (function animRing() {
+        rx += (cx - rx) * 0.12;
+        ry += (cy - ry) * 0.12;
+        cursorRing.style.left = rx + 'px';
+        cursorRing.style.top  = ry + 'px';
+        requestAnimationFrame(animRing);
+      })();
+    }
 
-    /* ════════════════════════════════════════════
-       NAV SCROLL EFFECT
-    ════════════════════════════════════════════ */
+    /* ── Nav scroll ── */
     const nav = document.getElementById('mainNav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 60);
     }, { passive: true });
 
-    /* ════════════════════════════════════════════
-       GSAP + ScrollTrigger
-    ════════════════════════════════════════════ */
+    /* ── GSAP ── */
     gsap.registerPlugin(ScrollTrigger);
 
-    /* ── Video caption cycling (auto, every 4s) ── */
+    /* ── Video caption cycling ── */
     const captionEl  = document.getElementById('videoCaption');
     const captionSub = document.getElementById('videoCaptionSub');
     const phaseDots  = document.querySelectorAll('.phase-dot');
-
     const phases = [
-      { title: 'Conectando el <span>AIFA</span><br>con México',     sub: 'Servicio premium desde el aeropuerto más moderno del país' },
-      { title: 'Seguros,<br><span>puntuales</span> y confiables',   sub: 'Tu traslado en las mejores manos — siempre a tiempo' },
-      { title: 'Siempre <span>disponibles</span><br>para ti',       sub: 'Las 24 horas, los 7 días de la semana, sin excepción' },
+      { title: 'Conectando el <span>AIFA</span><br>con México',    sub: 'Servicio premium desde el aeropuerto más moderno del país' },
+      { title: 'Seguros,<br><span>puntuales</span> y confiables',  sub: 'Tu traslado en las mejores manos — siempre a tiempo' },
+      { title: 'Siempre <span>disponibles</span><br>para ti',      sub: 'Las 24 horas, los 7 días de la semana, sin excepción' },
     ];
     let currentPhase = 0;
 
@@ -2264,35 +1683,26 @@
         }
       });
     }
-
     setInterval(nextPhase, 4000);
 
-    /* ── Hero entrance (fires when hero scrolls into view) ── */
-    const heroTl = gsap.timeline({
-      scrollTrigger: {
-        trigger: '.hero',
-        start: 'top 80%',
-        once: true,
-      },
-      defaults: { ease: 'power3.out' }
+    /* ── Hero right cards entrance ── */
+    gsap.to('.hero-right', {
+      opacity: 1, y: 0, duration: 1, delay: 0.3,
+      ease: 'power3.out'
     });
-    heroTl
-      .to('.hero-eyebrow',  { opacity: 1, y: 0, duration: 0.7 }, 0)
-      .to('.hero-title',    { opacity: 1, y: 0, duration: 0.85 }, 0.15)
-      .to('.hero-sub',      { opacity: 1, y: 0, duration: 0.75 }, 0.35)
-      .to('.hero-actions',  { opacity: 1, y: 0, duration: 0.65 }, 0.55)
-      .to('.hero-orb-wrap', { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.6)' }, 0.1);
 
-    /* ── Generic reveal ───────────────────────── */
-    function reveal(selector, fromVars = {}) {
+    /* ── Generic scroll reveals ── */
+    function reveal(selector, fromVars) {
       gsap.utils.toArray(selector).forEach(el => {
         gsap.fromTo(el,
           { opacity: 0, ...fromVars },
           {
             opacity: 1, x: 0, y: 0,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
+            duration: 0.8, ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el, start: 'top 90%',
+              toggleActions: 'play none none none'
+            }
           }
         );
       });
@@ -2301,50 +1711,34 @@
     reveal('.reveal-left',  { x: -50 });
     reveal('.reveal-right', { x: 50 });
 
-    /* ── Stats counter ────────────────────────── */
-    gsap.utils.toArray('.stat').forEach((stat, i) => {
-      gsap.from(stat, {
-        opacity: 0, y: 28,
-        duration: 0.6, delay: i * 0.1, ease: 'power2.out',
-        scrollTrigger: { trigger: stat, start: 'top 90%' }
+    /* ── Stats stagger ── */
+    gsap.from('.stat-item', {
+      opacity: 0, y: 28, duration: 0.6,
+      stagger: 0.1, ease: 'power2.out',
+      scrollTrigger: { trigger: '.stats-strip', start: 'top 90%' }
+    });
+
+    /* ── Service cards ── */
+    gsap.from('.srv-card', {
+      opacity: 0, y: 40, duration: 0.6,
+      stagger: 0.08, ease: 'power2.out',
+      scrollTrigger: { trigger: '.srv-grid', start: 'top 88%' }
+    });
+
+    /* ── Filter tabs ── */
+    function filterCards(cat, btn) {
+      document.querySelectorAll('.srv-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.srv-card').forEach(card => {
+        const cats = card.dataset.cat || '';
+        const show = cat === 'todos' || cats.includes(cat);
+        card.style.transition = 'opacity 0.3s, transform 0.3s';
+        card.style.opacity = show ? '1' : '0.15';
+        card.style.transform = show ? '' : 'scale(0.97)';
+        card.style.pointerEvents = show ? '' : 'none';
       });
-    });
-
-    /* ── Service cards stagger ────────────────── */
-    gsap.from('.service-card', {
-      opacity: 0, y: 50,
-      duration: 0.7, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.services-grid', start: 'top 85%' }
-    });
-
-    /* ── Floating cards ───────────────────────── */
-    gsap.utils.toArray('.why-card-float').forEach((card, i) => {
-      gsap.from(card, {
-        opacity: 0, scale: 0.88, y: 28,
-        duration: 0.65, delay: i * 0.15, ease: 'back.out(1.5)',
-        scrollTrigger: { trigger: '.why-visual', start: 'top 80%' }
-      });
-    });
-
-    /* ── Coverage routes ──────────────────────── */
-    gsap.from('.coverage-route', {
-      opacity: 0, x: 30,
-      duration: 0.5, stagger: 0.1, ease: 'power2.out',
-      scrollTrigger: { trigger: '.coverage-route', start: 'top 88%' }
-    });
-
-    /* ── Subtle parallax on hero orb ─────────── */
-    gsap.to('.orb-scene', {
-      y: -40,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '.hero',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-      }
-    });
-
+    }
+    window.filterCards = filterCards;
   </script>
 </body>
 </html>
